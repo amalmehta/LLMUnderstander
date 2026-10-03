@@ -126,4 +126,34 @@ final class EngineTests: XCTestCase {
         let end = path.last!
         XCTAssertLessThan(Landscape.ravine.value(end.0, end.1), 0.05)
     }
+
+    // MARK: Agents
+
+    func testAgentRLHacksNaiveRewardButNotRobustOne() {
+        func train(robust: Bool) -> [Double] {
+            var st = AgentRL.State()
+            var rng = SplitMix64(seed: 21)
+            for _ in 0..<150 { AgentRL.step(&st, robust: robust, rng: &rng) }
+            return Num.softmax(st.logits)
+        }
+        let naive = train(robust: false), robust = train(robust: true)
+        XCTAssertGreaterThan(naive[2], 0.6, "naive reward should be hacked by deleting the test")
+        XCTAssertGreaterThan(robust[0], 0.6, "robust reward should favour a genuine fix")
+        XCTAssertGreaterThan(AgentRL.genuineSuccess(robust), AgentRL.genuineSuccess(naive))
+    }
+
+    func testAgentScriptEndsWithFinalAnswerAndContextGrows() {
+        let ev = AgentScript.events
+        XCTAssertEqual(ev.last?.kind, .final)
+        XCTAssertGreaterThan(AgentScript.contextTokens(upTo: ev.count - 1), AgentScript.contextTokens(upTo: 2))
+        XCTAssertFalse(ev.filter { $0.kind == .toolResult }.contains { $0.trainedOn })
+    }
+
+    func testCompactionKeepsContextUnderWindow() {
+        let off = ContextBudget.segments(turns: 80, compaction: false)
+        let on = ContextBudget.segments(turns: 80, compaction: true)
+        XCTAssertTrue(off.overflow)
+        XCTAssertFalse(on.overflow)
+        XCTAssertGreaterThan(on.compactions, 0)
+    }
 }

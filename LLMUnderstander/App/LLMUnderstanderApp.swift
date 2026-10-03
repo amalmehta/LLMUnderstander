@@ -77,6 +77,10 @@ struct ChapterView: View {
         case .sft: SFTChapter()
         case .preferences: PreferencesChapter()
         case .pipeline: PipelineChapter()
+        case .agentLoop: AgentLoopChapter()
+        case .harness: HarnessChapter()
+        case .toolUse: ToolUseChapter()
+        case .agentTraining: AgentTrainingChapter()
         }
     }
 }

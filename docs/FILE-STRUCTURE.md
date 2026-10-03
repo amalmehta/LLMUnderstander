@@ -9,7 +9,7 @@ llm understander/
 ├── LLMUnderstander/             App source
 │   ├── App/
 │   │   ├── LLMUnderstanderApp.swift   App entry, window, sidebar, menus
-│   │   ├── Chapter.swift              The 13 chapters, their sections, and shared app state
+│   │   ├── Chapter.swift              The 17 chapters, their sections, and shared app state
 │   │   ├── Feedback.swift             Feedback tab and sheet (opens a GitHub issue)
 │   │   └── Snapshotter.swift          --snapshots mode that saves README screenshots
 │   ├── Engine/                  The learning machinery (no UI)
@@ -20,6 +20,7 @@ llm understander/
 │   │   ├── Tokenizer.swift            Character tokenizer and a real BPE trainer
 │   │   ├── Corpus.swift               Generated training and validation text
 │   │   ├── PreferenceToys.swift       SFT, reward model, RLHF and DPO on a toy 8-answer policy
+│   │   ├── AgentToys.swift            Scripted agent run, context-budget model, agent RL (REINFORCE)
 │   │   └── Landscapes.swift           2-D loss surfaces, scaling law, parameter counts, number formatting
 │   ├── UI/
 │   │   └── Components.swift           Page layout, cards, heatmaps, probability bars, banners
@@ -36,7 +37,11 @@ llm understander/
 │       ├── PretrainingChapter.swift
 │       ├── SFTChapter.swift
 │       ├── PreferencesChapter.swift
-│       └── PipelineChapter.swift
+│       ├── PipelineChapter.swift
+│       ├── AgentLoopChapter.swift     (also the shared transcript bubble and loop diagram)
+│       ├── HarnessChapter.swift
+│       ├── ToolUseChapter.swift
+│       └── AgentTrainingChapter.swift
 ├── Tests/
 │   └── EngineTests.swift        Gradient checks and behaviour tests for the engine
 └── docs/

@@ -24,6 +24,7 @@ To install it, drag `LLM Understander.app` from `build/dd/Build/Products/Release
 
 ## Use it
 
+- Chapters 14–17 (**Agents & Harnesses**) step through a coding agent fixing a failing test. They show the harness, tool calls, the context window filling up, and RL training an agent (including how a naive checker gets reward-hacked).
 - Pick a chapter from the sidebar, or press ⌘1–⌘9. Chapters build on each other, but each one stands alone.
 - **Chapter 9, The Training Loop**, trains a real 28k-weight transformer in about a minute. Press **Start training**.
   - Turn on **Slow motion** to follow each phase of a single step.
@@ -41,6 +42,7 @@ To install it, drag `LLM Understander.app` from `build/dd/Build/Products/Release
 | Embeddings, attention maps, predictions and losses, all read from that model | Pretraining-at-scale numbers are published or illustrative figures |
 | SFT, Bradley–Terry reward model, KL-regularised RL and DPO updates (exact maths) | Post-training uses a toy policy over 8 whole answers to one prompt |
 | Optimizer race on 2-D loss surfaces; Chinchilla-form scaling law | |
+| Agent RL: REINFORCE with sampled episodes on 4 strategies; context-window and compaction model | The agent run (Chapters 14–16) is scripted, not a live model; token counts are ≈ characters ÷ 4 |
 
 ## Tests
 
@@ -48,7 +50,7 @@ To install it, drag `LLM Understander.app` from `build/dd/Build/Products/Release
 xcodebuild -project "LLM Understander.xcodeproj" -scheme "LLM Understander" -derivedDataPath build/dd test
 ```
 
-The 10 engine tests cover:
+The 13 engine tests cover:
 
 - Gradient checks of every autograd op and of the full model
 - Causal attention
@@ -57,6 +59,7 @@ The 10 engine tests cover:
 - SFT, the reward model, reward hacking at a low KL penalty, and DPO
 - The scaling-law optimum
 - The optimizer race
+- Agents: RL hacking a naive reward but not a robust one, the scripted run and loss mask, compaction keeping the context under the limit
 
 ## Regenerate the screenshots
 

@@ -59,6 +59,9 @@ Decided without asking:
 - README screenshots are made by the app itself (`--snapshots`).
 - No app icon yet (proposal).
 
+Agents & Harnesses section (asked and answered 2026-10-03): a new sidebar section of 4 chapters (14–17), built around a scripted step-through agent run (works offline, no API key).
+Decided without asking: the scenario is a coding agent fixing a failing test; tool-call JSON follows the general shape of today's tool-use APIs and is labelled illustrative; the context-window model (200K limit, compaction at 80%) uses illustrative numbers; the agent-RL demo is real REINFORCE on a toy 4-strategy policy, tuned so a naive "tests pass" checker gets reward-hacked; the README screenshots were retaken in dark mode (the system appearance at the time).
+
 CHANGELOG:
 
 - 2026-10-02 — created
@@ -77,3 +80,4 @@ CHANGELOG:
 - 2026-09-29 — changed meta-instruction: GitHub repo names have no "_" or "-"
 - 2026-10-02 — added a DELIVERABLES field after CONTEXT
 - 2026-10-02 — built v1: native Mac app with 13 chapters, live tiny GPT, tests, README + docs; private GitHub repo LLMUnderstander
+- 2026-10-03 — added Agents & Harnesses section (chapters 14–17: agent loop, harness, tool use, training agents); scripted step-through run, live agent-RL demo

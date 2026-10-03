@@ -7,6 +7,7 @@ enum ChapterSection: String, CaseIterable, Identifiable {
     case pretraining = "Pretraining"
     case posttraining = "Post-training"
     case wrap = "Putting It Together"
+    case agents = "Agents & Harnesses"
     var id: String { rawValue }
 
     var color: Color {
@@ -17,6 +18,7 @@ enum ChapterSection: String, CaseIterable, Identifiable {
         case .pretraining: .orange
         case .posttraining: .pink
         case .wrap: .purple
+        case .agents: .green
         }
     }
 }
@@ -28,6 +30,7 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
     case pretraining
     case sft, preferences
     case pipeline
+    case agentLoop, harness, toolUse, agentTraining
 
     var id: Int { rawValue }
     var number: Int { rawValue + 1 }
@@ -47,6 +50,10 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .sft: "Supervised Fine-Tuning"
         case .preferences: "Learning from Preferences"
         case .pipeline: "The Full Pipeline"
+        case .agentLoop: "From Model to Agent"
+        case .harness: "The Harness"
+        case .toolUse: "Tool Use, Step by Step"
+        case .agentTraining: "Training Models to Be Agents"
         }
     }
 
@@ -65,6 +72,10 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .sft: "Teach the text predictor to act like an assistant, using examples."
         case .preferences: "Teach it what people prefer: reward models, RLHF and DPO."
         case .pipeline: "Every stage on one page: what changes, and what stays the same."
+        case .agentLoop: "A model only writes text. Put it in a loop with tools and it can act."
+        case .harness: "Everything around the model: prompt, tools, permissions, memory, context."
+        case .toolUse: "Schema in, JSON out, result back in — the anatomy of one tool call."
+        case .agentTraining: "Teach tool use with transcripts, then sharpen it with RL on real tasks."
         }
     }
 
@@ -83,6 +94,10 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .sft: "person.fill.checkmark"
         case .preferences: "hand.thumbsup"
         case .pipeline: "flowchart"
+        case .agentLoop: "arrow.triangle.turn.up.right.circle"
+        case .harness: "shippingbox"
+        case .toolUse: "wrench.and.screwdriver"
+        case .agentTraining: "figure.strengthtraining.traditional"
         }
     }
 
@@ -94,6 +109,7 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .pretraining: .pretraining
         case .sft, .preferences: .posttraining
         case .pipeline: .wrap
+        case .agentLoop, .harness, .toolUse, .agentTraining: .agents
         }
     }
 
