@@ -4,6 +4,10 @@ A Mac app that teaches how a large language model is trained, from tokens to RLH
 
 ![The Training Loop](docs/screenshots/09%20The%20Training%20Loop.png)
 
+**Also on the web:** the same 18 chapters as a website that trains the model in your browser — [open LLM Understander on the web](https://claude.ai/artifact/Ca1hMZNGCnTQHBocixMSeB) (private for now; share it from the page's Share menu).
+
+![The website](docs/screenshots/Website.jpg)
+
 | | |
 |---|---|
 | ![The Big Picture](docs/screenshots/01%20The%20Big%20Picture.png) | ![Attention](docs/screenshots/04%20Attention.png) |
@@ -38,6 +42,7 @@ flowchart LR
 
 ## Links
 
+- [The website](https://claude.ai/artifact/Ca1hMZNGCnTQHBocixMSeB) · [its source](web/)
 - [How to set up, run and use it](docs/INSTRUCTIONS.md)
 - [What's where in the code](docs/FILE-STRUCTURE.md)
 - [All chapter screenshots](docs/screenshots)

@@ -189,7 +189,7 @@ struct WorkflowsChapter: View {
                     StatTile(label: "\(s.rawValue) regret", value: String(format: "%.1f", states[s]!.regret), color: Self.colors[s]!)
                 }
             }
-            Text("Try **New random run** a few times. Greedy is sometimes perfect and sometimes stuck on a bad prompt for good. Thompson sampling is the most reliable here: its regret curve bends flat as it stops wasting tries. UCB1 is the most cautious: with prompts this close in quality it keeps re-checking them, so over 600 tries its regret is often higher, but it never gets permanently stuck the way greedy can.")
+            Text("Try **New random run** a few times. Greedy is sometimes perfect and sometimes stuck on a bad prompt for good. Over many runs, ε-greedy and Thompson sampling end up with similar average regret, but Thompson has the fewest bad runs: its regret curve bends flat as it stops wasting tries. UCB1 is the most cautious: with prompts this close in quality it keeps re-checking them, so over 600 tries its regret is often higher, but it never gets permanently stuck the way greedy can.")
                 .font(.callout).foregroundStyle(.secondary)
         }
     }

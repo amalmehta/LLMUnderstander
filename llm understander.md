@@ -64,6 +64,9 @@ Decided without asking: the scenario is a coding agent fixing a failing test; to
 Improvements round (2026-10-04, user asked for 3 improvements; chosen without asking): saving the trained model between launches; UI tests that click through the app (computer-use access had been declined, so they replace hand-testing); a generated app icon. Also added on request: Chapter 18 "Workflows & Bandits" (six workflow patterns, voting/best-of-n calculator, live four-strategy bandit race). Optimizer momentum isn't saved with the model; resuming rebuilds it within a few steps.
 Found while building the UI tests and fixed: animation timers ran every 30 ms even on idle pages (now they only run while something animates), and the Next button on the tool-use page moved while text typed out. Screenshots retaken in light mode.
 
+Website (asked and answered 2026-10-04): static site in web/ (TypeScript + Preact, Vite builds one self-contained HTML file), full parity with all 18 chapters, published as a private Artifact page (https://claude.ai/artifact/Ca1hMZNGCnTQHBocixMSeB), feedback tab opens a GitHub issue.
+Decided without asking: training runs in short time slices on the main thread (no Web Worker) so it works inside the Artifact frame; the trained model is kept in the browser's local storage (`?fresh` in the URL starts untrained); the browser uses its own seeded RNG, so its toy data and runs differ in detail from the Mac app but are tested for the same behaviour; charts are hand-written SVG (no chart library); the 16 remaining chapters were ported in parallel by four helper agents, then checked together in a browser.
+
 CHANGELOG:
 
 - 2026-10-02 — created
@@ -84,3 +87,4 @@ CHANGELOG:
 - 2026-10-02 — built v1: native Mac app with 13 chapters, live tiny GPT, tests, README + docs; private GitHub repo LLMUnderstander
 - 2026-10-03 — added Agents & Harnesses section (chapters 14–17: agent loop, harness, tool use, training agents); scripted step-through run, live agent-RL demo
 - 2026-10-04 — model saved between launches; UI test suite; app icon; Chapter 18 Workflows & Bandits; idle-CPU and jumping-button fixes
+- 2026-10-04 — website version (18 chapters, in-browser training) in web/, published as an Artifact page; fixed stale "Chapters 14–17" text

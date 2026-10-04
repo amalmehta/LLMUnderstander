@@ -22,6 +22,37 @@ open "build/dd/Build/Products/Release/LLM Understander.app"
 
 To install it, drag `LLM Understander.app` from `build/dd/Build/Products/Release/` into `/Applications`.
 
+## The website
+
+The same 18 chapters also run as a website, in `web/` (Preact + TypeScript, built with Vite into one self-contained HTML file). Everything runs in the browser, including training the tiny model.
+
+Run it locally (needs Node 20+):
+
+```bash
+npm --prefix web install
+```
+
+```bash
+npm --prefix web run dev
+```
+
+Then open http://localhost:5173. To build the single-file site (`web/dist/index.html`) and the Artifact version (`web/artifact/LLM Understander.html`):
+
+```bash
+npm --prefix web run build
+```
+
+Website tests (the engine tests, ported):
+
+```bash
+npm --prefix web test
+```
+
+Notes:
+- The trained model is kept in the browser's local storage. **Reset** deletes it. Add `?fresh` to the URL to start with an untrained model without touching the saved one.
+- Training speed depends on the browser and how busy the computer is; on an idle Mac it's about the same as the Mac app.
+- Each chapter has its own link, e.g. `#attention`.
+
 ## Use it
 
 - Chapters 14–18 (**Agents & Harnesses**) step through a coding agent fixing a failing test. They show the harness, tool calls, the context window filling up, and RL training an agent (including how a naive checker gets reward-hacked). Chapter 18 covers workflow patterns, voting and a live multi-armed-bandit race.

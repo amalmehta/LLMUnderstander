@@ -49,6 +49,23 @@ llm understander/
 │   └── EngineTests.swift        Gradient checks and behaviour tests for the engine
 ├── UITests/
 │   └── AppUITests.swift         Launches the app and clicks through every chapter
+├── web/                         The website version (same 18 chapters)
+│   ├── index.html                 Page shell (fonts, title)
+│   ├── vite.config.ts             Builds everything into one HTML file
+│   ├── scripts/make-artifact.mjs  Turns the build into an Artifact page
+│   ├── src/
+│   │   ├── main.tsx, app.tsx      Entry point; sidebar, phone drawer, chapter routing (#chapter-id), feedback tab
+│   │   ├── chapters.ts            The 18 chapters and their sections
+│   │   ├── styles.css             Design tokens (light and dark) and all styles
+│   │   ├── engine/                The Swift engine, ported to TypeScript
+│   │   │   ├── tensor.ts            Autograd tensor, ops, seeded RNG
+│   │   │   ├── model.ts             Corpus, tokenizers (char + BPE), TinyGPT, optimizers, LR schedule
+│   │   │   ├── trainer.ts           In-browser training loop (time-sliced), saved to local storage
+│   │   │   ├── toys.ts              SFT / reward model / RLHF / DPO toy, loss landscapes, scaling law
+│   │   │   └── agents.ts            Agent run script, context budget, agent RL, bandits, voting maths
+│   │   ├── ui/kit.tsx, ui/charts.tsx  Shared components and SVG charts
+│   │   └── chapters/              One file per chapter
+│   └── tests/engine.test.ts       Engine tests (Vitest)
 └── docs/
     ├── INSTRUCTIONS.md          Setup, run, use
     ├── FILE-STRUCTURE.md        This file

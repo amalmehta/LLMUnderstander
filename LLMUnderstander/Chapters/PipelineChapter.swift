@@ -111,7 +111,7 @@ struct PipelineChapter: View {
                 Prose("**Evaluation:** benchmarks, human ratings and red-teaming run throughout every stage to decide what to change next.")
                 Prose("**Mid-training and long context:** many pipelines add stages between pretraining and SFT: high-quality data annealing, extending the context window, adding code or math.")
                 Prose("**Inference engineering:** KV caching, batching many users together, quantisation (storing weights in 8 or 4 bits) and speculative decoding make serving fast and cheap.")
-                Prose("**Agents:** how a trained model becomes an agent that uses tools inside a harness is its own section — Chapters 14–17.")
+                Prose("**Agents:** how a trained model becomes an agent that uses tools inside a harness is its own section — Chapters 14–18.")
             }
         }
     }
