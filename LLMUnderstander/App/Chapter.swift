@@ -30,7 +30,7 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
     case pretraining
     case sft, preferences
     case pipeline
-    case agentLoop, harness, toolUse, agentTraining
+    case agentLoop, harness, toolUse, agentTraining, workflows
 
     var id: Int { rawValue }
     var number: Int { rawValue + 1 }
@@ -54,6 +54,7 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .harness: "The Harness"
         case .toolUse: "Tool Use, Step by Step"
         case .agentTraining: "Training Models to Be Agents"
+        case .workflows: "Workflows & Bandits"
         }
     }
 
@@ -76,6 +77,7 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .harness: "Everything around the model: prompt, tools, permissions, memory, context."
         case .toolUse: "Schema in, JSON out, result back in — the anatomy of one tool call."
         case .agentTraining: "Teach tool use with transcripts, then sharpen it with RL on real tasks."
+        case .workflows: "Wiring model calls into patterns — and choosing between options when you can't be sure which is best."
         }
     }
 
@@ -98,6 +100,7 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .harness: "shippingbox"
         case .toolUse: "wrench.and.screwdriver"
         case .agentTraining: "figure.strengthtraining.traditional"
+        case .workflows: "point.3.connected.trianglepath.dotted"
         }
     }
 
@@ -109,7 +112,7 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
         case .pretraining: .pretraining
         case .sft, .preferences: .posttraining
         case .pipeline: .wrap
-        case .agentLoop, .harness, .toolUse, .agentTraining: .agents
+        case .agentLoop, .harness, .toolUse, .agentTraining, .workflows: .agents
         }
     }
 
@@ -124,5 +127,12 @@ enum Chapter: Int, CaseIterable, Identifiable, Hashable {
 final class AppState {
     var selected: Chapter? = .bigPicture
     var showFeedback = false
-    let trainer = Trainer()
+    /// Screenshot runs and tests start from a fresh, unsaved model so they're repeatable.
+    let trainer = Trainer(saveURL: AppState.isAutomated ? nil : Trainer.defaultSaveURL)
+
+    static var isAutomated: Bool {
+        let args = CommandLine.arguments
+        return args.contains("--snapshots") || args.contains("--ui-testing")
+            || ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-enum OptimizerKind: String, CaseIterable, Identifiable {
+enum OptimizerKind: String, CaseIterable, Identifiable, Codable {
     case sgd = "SGD"
     case momentum = "Momentum"
     case adam = "AdamW"

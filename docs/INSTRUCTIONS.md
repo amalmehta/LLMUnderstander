@@ -24,11 +24,12 @@ To install it, drag `LLM Understander.app` from `build/dd/Build/Products/Release
 
 ## Use it
 
-- Chapters 14–17 (**Agents & Harnesses**) step through a coding agent fixing a failing test. They show the harness, tool calls, the context window filling up, and RL training an agent (including how a naive checker gets reward-hacked).
+- Chapters 14–18 (**Agents & Harnesses**) step through a coding agent fixing a failing test. They show the harness, tool calls, the context window filling up, and RL training an agent (including how a naive checker gets reward-hacked). Chapter 18 covers workflow patterns, voting and a live multi-armed-bandit race.
 - Pick a chapter from the sidebar, or press ⌘1–⌘9. Chapters build on each other, but each one stands alone.
 - **Chapter 9, The Training Loop**, trains a real 28k-weight transformer in about a minute. Press **Start training**.
   - Turn on **Slow motion** to follow each phase of a single step.
   - Press **Reset** to try other settings: plain SGD, or a huge learning rate.
+  - The trained model is saved when training stops and reloaded next launch (`~/Library/Application Support/LLM Understander/Tiny Model.json`). **Reset** deletes it.
 - Chapters 3, 4, 5 and 6 look inside that same model. Each shows a banner saying whether it's trained yet. **Train it now** starts training without leaving the page.
 - Every chapter ends with a **Go deeper** section for the maths.
 - The **Feedback** tab at the bottom of the sidebar (also **Help → Send Feedback…**) opens a pre-filled GitHub issue in your browser. Nothing is sent until you submit it there.
@@ -42,15 +43,17 @@ To install it, drag `LLM Understander.app` from `build/dd/Build/Products/Release
 | Embeddings, attention maps, predictions and losses, all read from that model | Pretraining-at-scale numbers are published or illustrative figures |
 | SFT, Bradley–Terry reward model, KL-regularised RL and DPO updates (exact maths) | Post-training uses a toy policy over 8 whole answers to one prompt |
 | Optimizer race on 2-D loss surfaces; Chinchilla-form scaling law | |
-| Agent RL: REINFORCE with sampled episodes on 4 strategies; context-window and compaction model | The agent run (Chapters 14–16) is scripted, not a live model; token counts are ≈ characters ÷ 4 |
+| Agent RL: REINFORCE with sampled episodes on 4 strategies; context-window and compaction model; bandit strategies (greedy, ε-greedy, UCB1, Thompson sampling); exact voting maths | The agent run (Chapters 14–16) is scripted, not a live model; token counts are ≈ characters ÷ 4 |
 
 ## Tests
 
 ```bash
-xcodebuild -project "LLM Understander.xcodeproj" -scheme "LLM Understander" -derivedDataPath build/dd test
+xcodebuild -project "LLM Understander.xcodeproj" -scheme "LLM Understander" -derivedDataPath build/dd test -test-timeouts-enabled YES -default-test-execution-time-allowance 240
 ```
 
-The 13 engine tests cover:
+There are two test suites: 16 engine tests (fast) and 8 UI tests that launch the app and click through it (about 5 minutes; UI tests need the Mac unlocked, and the app will take the screen while they run). To run only the engine tests, add `-only-testing:"Engine Tests"`.
+
+The engine tests cover:
 
 - Gradient checks of every autograd op and of the full model
 - Causal attention
@@ -60,6 +63,10 @@ The 13 engine tests cover:
 - The scaling-law optimum
 - The optimizer race
 - Agents: RL hacking a naive reward but not a robust one, the scripted run and loss mask, compaction keeping the context under the limit
+- Bandits (Thompson sampling beats greedy and ε-greedy on average), voting maths, Beta sampling
+- Saving and reloading the trained model
+
+The UI tests open all 18 chapters and use the main controls in each: training, back-propagation steps, the gradient check, SFT, RLHF, DPO, the agent step-throughs, the agent-RL and bandit runs, and the feedback sheet.
 
 ## Regenerate the screenshots
 

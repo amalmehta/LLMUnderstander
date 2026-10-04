@@ -12,7 +12,10 @@
 		09F02411D187947002C0785E /* Corpus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 081C46D7E14DAE68C9291500 /* Corpus.swift */; };
 		178DA406AE19945A01C37723 /* BlockChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6DC3AEF892C8A8315BCE255 /* BlockChapter.swift */; };
 		1C9CA2F9E60F0911E8207046 /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C2BD44914F166BC31363 /* Tokenizer.swift */; };
+		1F1E5DD7710722EE2DADE17B /* WorkflowsChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F874F32A30BE9A834B0146E1 /* WorkflowsChapter.swift */; };
+		288BB6C9C4BD830A03CAD08B /* AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726C1E79CA708A81BAEAEBE5 /* AppUITests.swift */; };
 		31525A03488878A55A2A2389 /* PipelineChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F85F2A855E644EA2F12987 /* PipelineChapter.swift */; };
+		3491FE538C5300ED6E63D8CE /* Bandits.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22792B1F42D04866055098A /* Bandits.swift */; };
 		34BA5F48B87A8950F1637E71 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7AA8D43C9EA1A4A384137D /* Feedback.swift */; };
 		36AA79DCBB8CD3DA75202FD5 /* SFTChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2557641077711A02238F7364 /* SFTChapter.swift */; };
 		4F5AC16825498585BE1259BC /* PreferenceToys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11618FB14A2BA3903746D897 /* PreferenceToys.swift */; };
@@ -21,6 +24,7 @@
 		6F571BE146C34C0E0B0AF2E1 /* Trainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DBA1722AB8D529E46F6B0F /* Trainer.swift */; };
 		6FE21E9C35EAC0151C6F1238 /* Snapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D2B130E5CC9C0553713F30 /* Snapshotter.swift */; };
 		73D3623D63B11A0D4B563767 /* AgentToys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5013B416D06FC58A30E370E9 /* AgentToys.swift */; };
+		7B55105F3E341D9C5CAB2592 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 374CF3691D191E404F013DFD /* Assets.xcassets */; };
 		7F925304C3F0A7CEFF22F377 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF80839A6E50CA04003286FB /* EngineTests.swift */; };
 		81701D536F25C2BF27280B02 /* TrainingLoopChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084CF4279C10144E244AC493 /* TrainingLoopChapter.swift */; };
 		9C8BA404FD58130891DEABEA /* PretrainingChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6AFEA8197C8B8B32653C62 /* PretrainingChapter.swift */; };
@@ -49,6 +53,13 @@
 			remoteGlobalIDString = BEF1303EADC9FC4A74A66599;
 			remoteInfo = "LLM Understander";
 		};
+		BD388D6460EB918B1C0A7AF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21B166054335635C63A7D554 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BEF1303EADC9FC4A74A66599;
+			remoteInfo = "LLM Understander";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -59,7 +70,9 @@
 		0A5712261676A992FA581B9E /* Engine Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Engine Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		11618FB14A2BA3903746D897 /* PreferenceToys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceToys.swift; sourceTree = "<group>"; };
 		2557641077711A02238F7364 /* SFTChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFTChapter.swift; sourceTree = "<group>"; };
+		2B89AC52FE84460ACCC343F6 /* App UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "App UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C72557283DF613CA9FA7888 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		374CF3691D191E404F013DFD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		398DC3207AF35BDE0833C3C6 /* PreferencesChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesChapter.swift; sourceTree = "<group>"; };
 		466B1C961658A6DD8C7F708B /* LLMUnderstanderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMUnderstanderApp.swift; sourceTree = "<group>"; };
 		47184DD1A398266BDB038B74 /* AgentTrainingChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentTrainingChapter.swift; sourceTree = "<group>"; };
@@ -67,6 +80,7 @@
 		5C437F5B12E32E169E64E092 /* Chapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter.swift; sourceTree = "<group>"; };
 		5D4EE8B680DCFB24C93B45C4 /* LLM Understander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LLM Understander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		697A38CB29EE438A9414F016 /* AgentLoopChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentLoopChapter.swift; sourceTree = "<group>"; };
+		726C1E79CA708A81BAEAEBE5 /* AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUITests.swift; sourceTree = "<group>"; };
 		8483E8285C77B866467DC5A4 /* TinyGPT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinyGPT.swift; sourceTree = "<group>"; };
 		855FAB197934D10A8EB9AF55 /* NextTokenChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextTokenChapter.swift; sourceTree = "<group>"; };
 		85DBA1722AB8D529E46F6B0F /* Trainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trainer.swift; sourceTree = "<group>"; };
@@ -79,11 +93,13 @@
 		AEE362BD8DD334A5C16BF99A /* TokensChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensChapter.swift; sourceTree = "<group>"; };
 		B4CF817AE3B2ADC59FFDE5B7 /* BackpropChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackpropChapter.swift; sourceTree = "<group>"; };
 		B6DC3AEF892C8A8315BCE255 /* BlockChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockChapter.swift; sourceTree = "<group>"; };
+		C22792B1F42D04866055098A /* Bandits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bandits.swift; sourceTree = "<group>"; };
 		C640C2BD44914F166BC31363 /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
 		D5D2B130E5CC9C0553713F30 /* Snapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snapshotter.swift; sourceTree = "<group>"; };
 		E1887322D1E4085A65DD4A1F /* Tensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tensor.swift; sourceTree = "<group>"; };
 		F4E86058FDD5BF53DDE3FB5D /* OptimizerChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizerChapter.swift; sourceTree = "<group>"; };
 		F77E78974F005D2DC421196A /* BigPictureChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigPictureChapter.swift; sourceTree = "<group>"; };
+		F874F32A30BE9A834B0146E1 /* WorkflowsChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkflowsChapter.swift; sourceTree = "<group>"; };
 		F9177656EE75D7D7F32BE2BE /* Optimizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optimizers.swift; sourceTree = "<group>"; };
 		FF80839A6E50CA04003286FB /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -128,6 +144,7 @@
 				AEE362BD8DD334A5C16BF99A /* TokensChapter.swift */,
 				8D6B0FB30246525FDB763F78 /* ToolUseChapter.swift */,
 				084CF4279C10144E244AC493 /* TrainingLoopChapter.swift */,
+				F874F32A30BE9A834B0146E1 /* WorkflowsChapter.swift */,
 			);
 			path = Chapters;
 			sourceTree = "<group>";
@@ -137,6 +154,7 @@
 			children = (
 				EA9C7706483F08A980670D5F /* LLMUnderstander */,
 				1113A70BBC7839E968FE9EA3 /* Tests */,
+				CCE57BE003C8002C13C26960 /* UITests */,
 				C898A11AF2DA46420D3A689E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -145,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				5013B416D06FC58A30E370E9 /* AgentToys.swift */,
+				C22792B1F42D04866055098A /* Bandits.swift */,
 				081C46D7E14DAE68C9291500 /* Corpus.swift */,
 				979AE38F83A705FD77C7B87B /* Landscapes.swift */,
 				F9177656EE75D7D7F32BE2BE /* Optimizers.swift */,
@@ -168,15 +187,25 @@
 		C898A11AF2DA46420D3A689E /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				2B89AC52FE84460ACCC343F6 /* App UI Tests.xctest */,
 				0A5712261676A992FA581B9E /* Engine Tests.xctest */,
 				5D4EE8B680DCFB24C93B45C4 /* LLM Understander.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CCE57BE003C8002C13C26960 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				726C1E79CA708A81BAEAEBE5 /* AppUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 		EA9C7706483F08A980670D5F /* LLMUnderstander */ = {
 			isa = PBXGroup;
 			children = (
+				374CF3691D191E404F013DFD /* Assets.xcassets */,
 				4EB7E463342574DEFAE75C7F /* App */,
 				5164C4E886CE9925ADA4D24D /* Chapters */,
 				7870693531DB36C40F305C18 /* Engine */,
@@ -188,11 +217,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4879895174C3EB041A9F8B28 /* App UI Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A767448102FAD0F34571DD10 /* Build configuration list for PBXNativeTarget "App UI Tests" */;
+			buildPhases = (
+				F3BF1837B0A19463018E71CA /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A784A78D2B5AC1FA074CDD67 /* PBXTargetDependency */,
+			);
+			name = "App UI Tests";
+			packageProductDependencies = (
+			);
+			productName = "App UI Tests";
+			productReference = 2B89AC52FE84460ACCC343F6 /* App UI Tests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		BEF1303EADC9FC4A74A66599 /* LLM Understander */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 367D6ABA9B8CFBAB06E2F904 /* Build configuration list for PBXNativeTarget "LLM Understander" */;
 			buildPhases = (
 				DA40FDA3C55B7C301B2B41F8 /* Sources */,
+				A6013FFDA26A0D4DA08C2CCD /* Resources */,
 			);
 			buildRules = (
 			);
@@ -232,6 +280,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					4879895174C3EB041A9F8B28 = {
+						ProvisioningStyle = Manual;
+						TestTargetID = BEF1303EADC9FC4A74A66599;
+					};
 					BEF1303EADC9FC4A74A66599 = {
 						ProvisioningStyle = Manual;
 					};
@@ -256,9 +308,21 @@
 			targets = (
 				BEF1303EADC9FC4A74A66599 /* LLM Understander */,
 				F6D8D8A11FD3D424535361BB /* Engine Tests */,
+				4879895174C3EB041A9F8B28 /* App UI Tests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A6013FFDA26A0D4DA08C2CCD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B55105F3E341D9C5CAB2592 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5C1B38D0CDED829EAA236402 /* Sources */ = {
@@ -278,6 +342,7 @@
 				B3A66BDB9C00DFD2CCAF349B /* AgentTrainingChapter.swift in Sources */,
 				E5F77EDB335BAA4AEC54076B /* AttentionChapter.swift in Sources */,
 				B925208E6733A41F72F18051 /* BackpropChapter.swift in Sources */,
+				3491FE538C5300ED6E63D8CE /* Bandits.swift in Sources */,
 				048FA640283E11C102B77BAB /* BigPictureChapter.swift in Sources */,
 				178DA406AE19945A01C37723 /* BlockChapter.swift in Sources */,
 				C29E1B6E7E1EE50DACDB63F8 /* Chapter.swift in Sources */,
@@ -304,6 +369,15 @@
 				EE446E0FF2042279BCD21FEA /* ToolUseChapter.swift in Sources */,
 				6F571BE146C34C0E0B0AF2E1 /* Trainer.swift in Sources */,
 				81701D536F25C2BF27280B02 /* TrainingLoopChapter.swift in Sources */,
+				1F1E5DD7710722EE2DADE17B /* WorkflowsChapter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3BF1837B0A19463018E71CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				288BB6C9C4BD830A03CAD08B /* AppUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,9 +389,33 @@
 			target = BEF1303EADC9FC4A74A66599 /* LLM Understander */;
 			targetProxy = 9761833AC65743333439D2B3 /* PBXContainerItemProxy */;
 		};
+		A784A78D2B5AC1FA074CDD67 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BEF1303EADC9FC4A74A66599 /* LLM Understander */;
+			targetProxy = BD388D6460EB918B1C0A7AF8 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		41BBEB60B5E3490D55365803 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.amalmehta.LLMUnderstanderUITests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = "LLM Understander";
+			};
+			name = Debug;
+		};
 		4B410FAA8B754E3F4C4F35C1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -355,6 +453,25 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LLM Understander.app/Contents/MacOS/LLM Understander";
 			};
 			name = Debug;
+		};
+		5D462CA3A7BC85F7C11A7479 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.amalmehta.LLMUnderstanderUITests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = "LLM Understander";
+			};
+			name = Release;
 		};
 		8C5803E16085A1C4ED246B77 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -546,6 +663,15 @@
 			buildConfigurations = (
 				559174FE803B5A191F5D1860 /* Debug */,
 				4B410FAA8B754E3F4C4F35C1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A767448102FAD0F34571DD10 /* Build configuration list for PBXNativeTarget "App UI Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41BBEB60B5E3490D55365803 /* Debug */,
+				5D462CA3A7BC85F7C11A7479 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

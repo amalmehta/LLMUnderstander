@@ -8,7 +8,6 @@ struct AgentTrainingChapter: View {
     @State private var rng = SplitMix64(seed: 21)
     @State private var history: [(update: Int, reward: Double, genuine: Double)] = []
     @State private var remaining = 0
-    private let timer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ChapterPage(chapter: .agentTraining) {
@@ -63,8 +62,7 @@ struct AgentTrainingChapter: View {
                 Formula("REINFORCE with a baseline:   θ ← θ + lr · mean[ (R − b) · ∇ log π(action) ]")
             }
         }
-        .onReceive(timer) { _ in
-            guard remaining > 0 else { return }
+        .ticking(every: 0.05, while: remaining > 0) {
             for _ in 0..<2 where remaining > 0 {
                 AgentRL.step(&rl, robust: robust, rng: &rng)
                 remaining -= 1
@@ -85,6 +83,7 @@ struct AgentTrainingChapter: View {
                 Spacer()
                 Toggle("Checker also verifies the tests weren't modified", isOn: Binding(get: { robust }, set: { robust = $0; reset() }))
                     .toggleStyle(.switch)
+                    .accessibilityIdentifier("robustChecker")
             }
             HStack(alignment: .top, spacing: 20) {
                 Chart(AgentRL.strategies) { s in

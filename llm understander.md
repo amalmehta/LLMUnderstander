@@ -57,10 +57,12 @@ Decided without asking:
 - Scaling-law constants come from the Epoch AI (2024) replication of Chinchilla. Real-model figures are published or widely reported numbers; GPT-2's token count is marked as an estimate.
 - The autograd engine is written in Swift, using Accelerate BLAS for matrix multiply. Exclusivity checking is disabled in the build for speed.
 - README screenshots are made by the app itself (`--snapshots`).
-- No app icon yet (proposal).
 
 Agents & Harnesses section (asked and answered 2026-10-03): a new sidebar section of 4 chapters (14–17), built around a scripted step-through agent run (works offline, no API key).
 Decided without asking: the scenario is a coding agent fixing a failing test; tool-call JSON follows the general shape of today's tool-use APIs and is labelled illustrative; the context-window model (200K limit, compaction at 80%) uses illustrative numbers; the agent-RL demo is real REINFORCE on a toy 4-strategy policy, tuned so a naive "tests pass" checker gets reward-hacked; the README screenshots were retaken in dark mode (the system appearance at the time).
+
+Improvements round (2026-10-04, user asked for 3 improvements; chosen without asking): saving the trained model between launches; UI tests that click through the app (computer-use access had been declined, so they replace hand-testing); a generated app icon. Also added on request: Chapter 18 "Workflows & Bandits" (six workflow patterns, voting/best-of-n calculator, live four-strategy bandit race). Optimizer momentum isn't saved with the model; resuming rebuilds it within a few steps.
+Found while building the UI tests and fixed: animation timers ran every 30 ms even on idle pages (now they only run while something animates), and the Next button on the tool-use page moved while text typed out. Screenshots retaken in light mode.
 
 CHANGELOG:
 
@@ -81,3 +83,4 @@ CHANGELOG:
 - 2026-10-02 — added a DELIVERABLES field after CONTEXT
 - 2026-10-02 — built v1: native Mac app with 13 chapters, live tiny GPT, tests, README + docs; private GitHub repo LLMUnderstander
 - 2026-10-03 — added Agents & Harnesses section (chapters 14–17: agent loop, harness, tool use, training agents); scripted step-through run, live agent-RL demo
+- 2026-10-04 — model saved between launches; UI test suite; app icon; Chapter 18 Workflows & Bandits; idle-CPU and jumping-button fixes

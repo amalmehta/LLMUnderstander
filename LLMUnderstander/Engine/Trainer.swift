@@ -1,13 +1,13 @@
 import Foundation
 import Observation
 
-struct Point: Identifiable, Hashable {
+struct Point: Identifiable, Hashable, Codable {
     let x: Double
     let y: Double
     var id: Double { x }
 }
 
-struct GeneratedSample: Identifiable, Hashable {
+struct GeneratedSample: Identifiable, Hashable, Codable {
     let step: Int
     let text: String
     var id: Int { step }
@@ -37,7 +37,7 @@ enum LoopPhase: Int, CaseIterable, Identifiable {
     }
 }
 
-struct TrainSettings: Equatable {
+struct TrainSettings: Equatable, Codable {
     var peakLR = 3e-3
     var batchSize = 8
     var optimizer: OptimizerKind = .adam
@@ -146,11 +146,61 @@ final class Trainer {
     @ObservationIgnored private var worker: TrainingWorker
     @ObservationIgnored private let queue = DispatchQueue(label: "training", qos: .userInitiated)
 
-    init() {
+    /// Where the trained model is kept between launches (nil = don't save, e.g. tests and screenshots).
+    @ObservationIgnored private let saveURL: URL?
+
+    init(saveURL: URL? = Trainer.defaultSaveURL) {
         config = GPTConfig(vocab: CharTokenizer.shared.size)
         worker = TrainingWorker(config: config, settings: TrainSettings(), tokenizer: CharTokenizer.shared)
         snapshot = worker.model.copy()
-        recordInitial()
+        self.saveURL = saveURL
+        if !restore() { recordInitial() }
+    }
+
+    nonisolated static var defaultSaveURL: URL? {
+        guard let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return nil }
+        return dir.appendingPathComponent("LLM Understander", isDirectory: true).appendingPathComponent("Tiny Model.json")
+    }
+
+    /// Everything needed to bring a trained model and its charts back after a relaunch.
+    struct Saved: Codable {
+        var config: GPTConfig
+        var settings: TrainSettings
+        var step: Int
+        var weights: [[Double]]
+        var trainLoss: [Point], valLoss: [Point], learningRates: [Point], gradNorms: [Point]
+        var samples: [GeneratedSample]
+    }
+
+    /// Save the model after training stops. Optimizer momentum isn't saved; resuming rebuilds it within a few steps.
+    func save() {
+        guard let url = saveURL, step > 0 else { return }
+        let saved = Saved(config: config, settings: settings, step: step, weights: worker.model.parameters.map(\.data),
+                          trainLoss: trainLoss, valLoss: valLoss, learningRates: learningRates, gradNorms: gradNorms, samples: samples)
+        do {
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try JSONEncoder().encode(saved).write(to: url, options: .atomic)
+        } catch {
+            NSLog("LLM Understander: could not save model: \(error)")
+        }
+    }
+
+    /// Load a previously saved model if it matches this app's model shape.
+    private func restore() -> Bool {
+        guard let url = saveURL, let data = try? Data(contentsOf: url),
+              let saved = try? JSONDecoder().decode(Saved.self, from: data),
+              saved.config == config else { return false }
+        let params = worker.model.parameters
+        guard saved.weights.count == params.count, zip(saved.weights, params).allSatisfy({ $0.count == $1.count }) else { return false }
+        for (w, p) in zip(saved.weights, params) { p.data = w }
+        worker.step = saved.step
+        settings = saved.settings
+        step = saved.step
+        trainLoss = saved.trainLoss; valLoss = saved.valLoss
+        learningRates = saved.learningRates; gradNorms = saved.gradNorms
+        samples = saved.samples
+        snapshot = worker.model.copy()
+        return true
     }
 
     var parameterCount: Int { snapshot.parameterCount }
@@ -173,6 +223,7 @@ final class Trainer {
         queue.sync {}
         isRunning = false
         worker = TrainingWorker(config: config, settings: settings, tokenizer: tokenizer)
+        if let url = saveURL { try? FileManager.default.removeItem(at: url) }
         step = 0
         trainLoss = []; valLoss = []; learningRates = []; gradNorms = []; samples = []
         phase = nil
@@ -223,6 +274,7 @@ final class Trainer {
                 self.phase = nil
                 self.snapshot = w.model.copy()
                 self.snapshotVersion += 1
+                self.save()
             }
         }
     }

@@ -81,6 +81,7 @@ struct ChapterView: View {
         case .harness: HarnessChapter()
         case .toolUse: ToolUseChapter()
         case .agentTraining: AgentTrainingChapter()
+        case .workflows: WorkflowsChapter()
         }
     }
 }

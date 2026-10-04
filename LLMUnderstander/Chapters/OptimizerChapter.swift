@@ -11,7 +11,6 @@ struct OptimizerChapter: View {
     @State private var total = 1500.0
 
     private let maxSteps = 120
-    private let timer = Timer.publish(every: 0.03, on: .main, in: .common).autoconnect()
 
     static let colors: [OptimizerKind: Color] = [.sgd: .red, .momentum: .blue, .adam: .green]
 
@@ -59,8 +58,7 @@ struct OptimizerChapter: View {
                 Text("Try it: in the **ravine**, plain SGD zig-zags across the steep walls and crawls along the floor. Raise the learning rate and it overshoots and blows up. **Momentum** builds up speed along the consistent direction. **Adam** gives each weight its own step size, so steep and flat directions both make progress.")
                     .font(.callout).foregroundStyle(.secondary)
             }
-            .onReceive(timer) { _ in
-                guard playing else { return }
+            .ticking(every: 0.03, while: playing) {
                 if progress < maxSteps { progress += 1 } else { playing = false }
             }
             .onChange(of: landscape) { progress = 0; playing = true }

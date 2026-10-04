@@ -1,6 +1,6 @@
 import Foundation
 
-struct GPTConfig: Equatable {
+struct GPTConfig: Equatable, Codable {
     var vocab: Int
     var context: Int = 32
     var dModel: Int = 32

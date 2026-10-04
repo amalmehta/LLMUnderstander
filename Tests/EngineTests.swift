@@ -156,4 +156,39 @@ final class EngineTests: XCTestCase {
         XCTAssertFalse(on.overflow)
         XCTAssertGreaterThan(on.compactions, 0)
     }
+
+    @MainActor
+    func testTrainedModelSurvivesRelaunch() {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("llmu-test-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: url) }
+        let a = Trainer(saveURL: url)
+        a.trainNow(steps: 20)
+        a.save()
+        let b = Trainer(saveURL: url)
+        XCTAssertEqual(b.step, 20)
+        XCTAssertEqual(b.trainLoss.count, a.trainLoss.count)
+        XCTAssertEqual(b.snapshot.wte.data, a.snapshot.wte.data)
+        b.reset()
+        XCTAssertFalse(FileManager.default.fileExists(atPath: url.path), "Reset should delete the saved model")
+    }
+
+    func testBanditExplorersBeatGreedyOnAverage() {
+        func avgRegret(_ s: Bandit.Strategy) -> Double {
+            (1...30).map { Bandit.run(s, steps: 600, seed: UInt64($0)).regret }.reduce(0, +) / 30
+        }
+        let greedy = avgRegret(.greedy), ucb = avgRegret(.ucb), ts = avgRegret(.thompson)
+        print("bandit regret: greedy \(greedy) ε \(avgRegret(.epsilon)) ucb \(ucb) thompson \(ts)")
+        XCTAssertLessThan(ts, greedy)
+        XCTAssertLessThan(ts, avgRegret(.epsilon))
+    }
+
+    func testVotingMaths() {
+        XCTAssertEqual(Sampling.majority(p: 0.6, n: 1), 0.6, accuracy: 1e-12)
+        XCTAssertEqual(Sampling.majority(p: 0.6, n: 3), 0.648, accuracy: 1e-12)   // 3·0.36·0.4 + 0.216
+        XCTAssertLessThan(Sampling.majority(p: 0.4, n: 9), 0.4)                    // voting hurts below 50%
+        XCTAssertEqual(Sampling.anyCorrect(p: 0.5, n: 3), 0.875, accuracy: 1e-12)
+        var rng = SplitMix64(seed: 3)
+        let draws = (0..<4000).map { _ in Bandit.betaSample(3, 7, rng: &rng) }
+        XCTAssertEqual(draws.reduce(0, +) / 4000, 0.3, accuracy: 0.01)            // Beta(3,7) mean = 0.3
+    }
 }

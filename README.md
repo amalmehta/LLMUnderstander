@@ -10,8 +10,9 @@ A Mac app that teaches how a large language model is trained, from tokens to RLH
 | ![The Transformer Block](docs/screenshots/05%20The%20Transformer%20Block.png) | ![The Optimizer](docs/screenshots/08%20The%20Optimizer.png) |
 | ![Learning from Preferences](docs/screenshots/12%20Learning%20from%20Preferences.png) | ![The Full Pipeline](docs/screenshots/13%20The%20Full%20Pipeline.png) |
 | ![From Model to Agent](docs/screenshots/14%20From%20Model%20to%20Agent.png) | ![The Harness](docs/screenshots/15%20The%20Harness.png) |
+| ![Training Models to Be Agents](docs/screenshots/17%20Training%20Models%20to%20Be%20Agents.png) | ![Workflows & Bandits](docs/screenshots/18%20Workflows%20%26%20Bandits.png) |
 
-## The 17 chapters
+## The 18 chapters
 
 ```mermaid
 flowchart LR
@@ -31,7 +32,7 @@ flowchart LR
     E --> F[13 Full Pipeline]
     F --> G
     subgraph G[Agents & Harnesses]
-        G14[14 Model to Agent] --> G15[15 The Harness] --> G16[16 Tool Use] --> G17[17 Training Agents]
+        G14[14 Model to Agent] --> G15[15 The Harness] --> G16[16 Tool Use] --> G17[17 Training Agents] --> G18[18 Workflows & Bandits]
     end
 ```
 

@@ -3,7 +3,6 @@ import SwiftUI
 struct AgentLoopChapter: View {
     @State private var step = 2
     @State private var playing = false
-    private let timer = Timer.publish(every: 1.6, on: .main, in: .common).autoconnect()
     private let events = AgentScript.events
 
     var body: some View {
@@ -72,8 +71,7 @@ struct AgentLoopChapter: View {
                     .onChange(of: step) { withAnimation { proxy.scrollTo(step, anchor: .bottom) } }
                 }
             }
-            .onReceive(timer) { _ in
-                guard playing else { return }
+            .ticking(every: 1.6, while: playing) {
                 if step < events.count - 1 { withAnimation { step += 1 } } else { playing = false }
             }
 

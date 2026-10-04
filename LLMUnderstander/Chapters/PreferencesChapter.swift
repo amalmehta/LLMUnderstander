@@ -24,7 +24,6 @@ struct PreferencesChapter: View {
     @State private var dpoRunning = false
     @State private var dpoHistory: [Point] = []
 
-    private let timer = Timer.publish(every: 0.03, on: .main, in: .common).autoconnect()
     private let rlTotal = 600, dpoTotal = 300
 
     var body: some View {
@@ -56,7 +55,7 @@ struct PreferencesChapter: View {
                 Prose("**Verifiable rewards:** for math and code the reward can be computed directly — did the answer match, did the tests pass? Reinforcement learning on such rewards, with long chains of thought, is how recent *reasoning* models are trained. Same idea: generate, score, push up what scored well.")
             }
         }
-        .onReceive(timer) { _ in tick() }
+        .ticking(every: 0.03, while: rlRunning || dpoRunning) { tick() }
     }
 
     // MARK: - 1 Comparisons

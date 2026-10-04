@@ -368,3 +368,20 @@ struct FlowRow: View {
         }
     }
 }
+
+// MARK: - Animation ticks
+
+extension View {
+    /// Calls `action` every `interval` seconds, but only while `active` is true,
+    /// so a page that isn't animating uses no CPU (and lets the app go idle).
+    func ticking(every interval: Double, while active: Bool, _ action: @escaping @MainActor () -> Void) -> some View {
+        task(id: active) {
+            guard active else { return }
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(interval))
+                if Task.isCancelled { break }
+                action()
+            }
+        }
+    }
+}

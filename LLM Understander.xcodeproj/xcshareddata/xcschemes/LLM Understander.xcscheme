@@ -15,6 +15,20 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4879895174C3EB041A9F8B28"
+               BuildableName = "App UI Tests.xctest"
+               BlueprintName = "App UI Tests"
+               ReferencedContainer = "container:LLM Understander.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "F6D8D8A11FD3D424535361BB"
                BuildableName = "Engine Tests.xctest"
                BlueprintName = "Engine Tests"
@@ -61,6 +75,17 @@
                BlueprintIdentifier = "F6D8D8A11FD3D424535361BB"
                BuildableName = "Engine Tests.xctest"
                BlueprintName = "Engine Tests"
+               ReferencedContainer = "container:LLM Understander.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4879895174C3EB041A9F8B28"
+               BuildableName = "App UI Tests.xctest"
+               BlueprintName = "App UI Tests"
                ReferencedContainer = "container:LLM Understander.xcodeproj">
             </BuildableReference>
          </TestableReference>
