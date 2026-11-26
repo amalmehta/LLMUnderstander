@@ -60,6 +60,12 @@ final class TrainingWorker: @unchecked Sendable {
     private let lock = NSLock()
     private var _running = false
     private var _slow = false
+    private var _prompt = "the "
+    /// What the sample every 100 steps starts with (the reader can change it while training runs).
+    var prompt: String {
+        get { lock.lock(); defer { lock.unlock() }; return _prompt }
+        set { lock.lock(); _prompt = newValue; lock.unlock() }
+    }
     var slow: Bool {
         get { lock.lock(); defer { lock.unlock() }; return _slow }
         set { lock.lock(); _slow = newValue; lock.unlock() }
@@ -114,7 +120,8 @@ final class TrainingWorker: @unchecked Sendable {
         return model.loss(batch: b).item
     }
 
-    func sample(prompt: String = "the ", count: Int = 60) -> String {
+    func sample(count: Int = 60) -> String {
+        let prompt = tokenizer.clean(self.prompt)
         var r = SplitMix64(seed: UInt64(step) &+ 5)
         let ids = model.generate(prompt: tokenizer.encode(prompt), count: count, temperature: 0.8, rng: &r)
         return prompt + tokenizer.decode(ids)
@@ -138,6 +145,10 @@ final class Trainer {
     private(set) var phase: LoopPhase?
     var slowMotion = false {
         didSet { worker.slow = slowMotion }
+    }
+    /// The text each sample starts from. Changing it takes effect at the next sample.
+    var samplePrompt = "the " {
+        didSet { worker.prompt = samplePrompt }
     }
     /// A frozen copy of the model for the other chapters to look inside.
     private(set) var snapshot: TinyGPT
@@ -170,13 +181,19 @@ final class Trainer {
         var weights: [[Double]]
         var trainLoss: [Point], valLoss: [Point], learningRates: [Point], gradNorms: [Point]
         var samples: [GeneratedSample]
+        /// Added in 1.1; older saves have none and rebuild momentum within a few steps.
+        var optimizer: Optimizer.State?
+        /// Where the batch sampler was, so a resumed run sees the same batches as an unbroken one.
+        var batchRNG: UInt64?
     }
 
-    /// Save the model after training stops. Optimizer momentum isn't saved; resuming rebuilds it within a few steps.
+    /// Save the model and the optimizer's state after training stops, so resuming continues the same run.
     func save() {
         guard let url = saveURL, step > 0 else { return }
-        let saved = Saved(config: config, settings: settings, step: step, weights: worker.model.parameters.map(\.data),
-                          trainLoss: trainLoss, valLoss: valLoss, learningRates: learningRates, gradNorms: gradNorms, samples: samples)
+        let params = worker.model.parameters
+        let saved = Saved(config: config, settings: settings, step: step, weights: params.map(\.data),
+                          trainLoss: trainLoss, valLoss: valLoss, learningRates: learningRates, gradNorms: gradNorms, samples: samples,
+                          optimizer: worker.optimizer.state(for: params), batchRNG: worker.rng.state)
         do {
             try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
             try JSONEncoder().encode(saved).write(to: url, options: .atomic)
@@ -195,6 +212,10 @@ final class Trainer {
         for (w, p) in zip(saved.weights, params) { p.data = w }
         worker.step = saved.step
         settings = saved.settings
+        worker.settings = saved.settings
+        worker.optimizer = Optimizer(kind: saved.settings.optimizer)
+        if let o = saved.optimizer { worker.optimizer.restore(o, for: params) }
+        if let r = saved.batchRNG { worker.rng.state = r }
         step = saved.step
         trainLoss = saved.trainLoss; valLoss = saved.valLoss
         learningRates = saved.learningRates; gradNorms = saved.gradNorms
@@ -205,7 +226,11 @@ final class Trainer {
 
     var parameterCount: Int { snapshot.parameterCount }
     var tokensSeen: Int { step * settings.batchSize * config.context }
-    var isTrained: Bool { step >= 300 }
+    /// Trained = validation loss at or below 60% of random guessing (see DEFINITIONS in the spec).
+    static let trainedFraction = 0.6
+    var trainedLoss: Double { Trainer.trainedFraction * uniformLoss }
+    var latestValLoss: Double? { valLoss.last?.y }
+    var isTrained: Bool { (latestValLoss ?? .infinity) <= trainedLoss }
     var finished: Bool { step >= settings.totalSteps }
 
     /// Loss of a model that knows nothing: guessing uniformly among all characters.
@@ -223,6 +248,7 @@ final class Trainer {
         queue.sync {}
         isRunning = false
         worker = TrainingWorker(config: config, settings: settings, tokenizer: tokenizer)
+        worker.prompt = samplePrompt
         if let url = saveURL { try? FileManager.default.removeItem(at: url) }
         step = 0
         trainLoss = []; valLoss = []; learningRates = []; gradNorms = []; samples = []

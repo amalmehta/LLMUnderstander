@@ -172,6 +172,33 @@ final class EngineTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: url.path), "Reset should delete the saved model")
     }
 
+    /// Pausing, quitting and relaunching should continue the same run, not a slightly different one.
+    @MainActor
+    func testResumedRunMatchesUnbrokenRun() {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("llmu-test-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: url) }
+        let unbroken = Trainer(saveURL: nil)
+        unbroken.trainNow(steps: 40)
+        let first = Trainer(saveURL: url)
+        first.trainNow(steps: 20)
+        first.save()
+        let resumed = Trainer(saveURL: url)
+        resumed.trainNow(steps: 20)
+        XCTAssertEqual(resumed.step, 40)
+        XCTAssertEqual(resumed.trainLoss.last!.y, unbroken.trainLoss.last!.y, accuracy: 1e-9)
+        XCTAssertEqual(resumed.snapshot.wte.data, unbroken.snapshot.wte.data)
+    }
+
+    /// "Trained" is defined by loss (validation ≤ 60% of random guessing), and a full run gets there.
+    @MainActor
+    func testFullRunCountsAsTrained() {
+        let t = Trainer(saveURL: nil)
+        XCTAssertFalse(t.isTrained)
+        t.trainNow(steps: t.settings.totalSteps)
+        print("final validation loss \(t.latestValLoss!) vs trained bar \(t.trainedLoss); crossed at step \(t.valLoss.first { $0.y <= t.trainedLoss }?.x ?? -1)")
+        XCTAssertTrue(t.isTrained)
+    }
+
     func testBanditExplorersBeatGreedyOnAverage() {
         func avgRegret(_ s: Bandit.Strategy) -> Double {
             (1...30).map { Bandit.run(s, steps: 600, seed: UInt64($0)).regret }.reduce(0, +) / 30

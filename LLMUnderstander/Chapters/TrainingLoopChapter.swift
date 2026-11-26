@@ -69,7 +69,10 @@ struct TrainingLoopChapter: View {
                 }
                 .frame(width: 560)
 
-                Card(title: "What it writes", subtitle: "Prompt \"the \", sampled every 100 steps") {
+                Card(title: "What it writes", subtitle: "Sampled every 100 steps, starting from your prompt") {
+                    TextField("Prompt", text: $t.samplePrompt, prompt: Text("the "))
+                        .textFieldStyle(.roundedBorder).font(.system(size: 12.5, design: .monospaced))
+                        .help("Each sample starts with this text. Try the start of a word, like \"the far\".")
                     ScrollView {
                         VStack(alignment: .leading, spacing: 8) {
                             ForEach(t.samples.reversed()) { s in
@@ -83,7 +86,7 @@ struct TrainingLoopChapter: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(height: 190)
+                    .frame(height: 158)
                 }
             }
 

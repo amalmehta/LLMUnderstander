@@ -18,6 +18,32 @@ final class Optimizer {
 
     init(kind: OptimizerKind) { self.kind = kind }
 
+    /// Momentum and second-moment estimates, in the same order as `params`, so a saved run resumes exactly.
+    struct State: Codable, Equatable {
+        var t: Int
+        var m: [[Double]?]
+        var v: [[Double]?]
+    }
+
+    func state(for params: [Tensor]) -> State {
+        State(t: t, m: params.map { m[ObjectIdentifier($0)] }, v: params.map { v[ObjectIdentifier($0)] })
+    }
+
+    /// Returns false (and changes nothing) if the saved state doesn't fit these parameters.
+    @discardableResult
+    func restore(_ s: State, for params: [Tensor]) -> Bool {
+        guard s.m.count == params.count, s.v.count == params.count,
+              zip(s.m, params).allSatisfy({ $0.0 == nil || $0.0!.count == $0.1.count }),
+              zip(s.v, params).allSatisfy({ $0.0 == nil || $0.0!.count == $0.1.count }) else { return false }
+        t = s.t
+        m = [:]; v = [:]
+        for (i, p) in params.enumerated() {
+            if let mv = s.m[i] { m[ObjectIdentifier(p)] = mv }
+            if let vv = s.v[i] { v[ObjectIdentifier(p)] = vv }
+        }
+        return true
+    }
+
     func step(_ params: [Tensor], lr: Double) {
         t += 1
         for p in params {

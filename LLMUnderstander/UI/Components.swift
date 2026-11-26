@@ -322,10 +322,11 @@ struct ModelStatusBanner: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(t.isTrained
                      ? "Using the tiny model after \(t.step) training steps."
-                     : (t.step == 0 ? "The tiny model is untrained — its insides are random noise." : "The tiny model has only trained \(t.step) steps."))
+                     : (t.step == 0 ? "The tiny model is untrained — its insides are random noise." : "The tiny model has trained \(t.step) steps, but isn't good yet."))
                     .font(.subheadline.weight(.semibold))
-                Text("Everything below is computed live by a real \(Format.big(Double(t.parameterCount)))-parameter transformer running on this Mac.")
+                Text(lossLine(t) + " Everything below is computed live by a real \(Format.big(Double(t.parameterCount)))-parameter transformer running on this Mac.")
                     .font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             Spacer()
             if t.isRunning {
@@ -338,6 +339,14 @@ struct ModelStatusBanner: View {
         }
         .padding(12)
         .background((t.isTrained ? Color.green : Color.orange).opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
+    }
+
+    /// Says what "trained" means in numbers: validation loss against random guessing.
+    private func lossLine(_ t: Trainer) -> String {
+        let guess = String(format: "%.2f", t.uniformLoss), bar = String(format: "%.2f", t.trainedLoss)
+        guard let v = t.latestValLoss else { return "Random guessing scores a loss of \(guess)." }
+        return "Validation loss \(String(format: "%.2f", v)); random guessing scores \(guess), and it counts as trained at \(bar) or below."
     }
 }
 

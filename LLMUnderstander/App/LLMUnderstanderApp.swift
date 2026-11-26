@@ -17,6 +17,13 @@ struct LLMUnderstanderApp: App {
                 Button("Send Feedback…") { app.showFeedback = true }
             }
             CommandMenu("Chapters") {
+                Button("Previous Chapter") { app.selected = (app.selected ?? .bigPicture).previous ?? app.selected }
+                    .keyboardShortcut("[", modifiers: .command)
+                    .disabled((app.selected ?? .bigPicture).previous == nil)
+                Button("Next Chapter") { app.selected = (app.selected ?? .bigPicture).next ?? app.selected }
+                    .keyboardShortcut("]", modifiers: .command)
+                    .disabled((app.selected ?? .bigPicture).next == nil)
+                Divider()
                 ForEach(Chapter.allCases) { c in
                     if c.number <= 9 {
                         Button("\(c.number). \(c.title)") { app.selected = c }
