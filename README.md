@@ -45,5 +45,7 @@ flowchart LR
 - [The website](https://amalmehta.github.io/LLMUnderstander/) · [its source](web/)
 - [How to set up, run and use it](docs/INSTRUCTIONS.md)
 - [What's where in the code](docs/FILE-STRUCTURE.md)
+- [How it's designed](docs/SYSTEM-DESIGN.md)
+- [Prompt log](docs/PROMPTS.md)
 - [All chapter screenshots](docs/screenshots)
 - [Project brief](llm%20understander.md)

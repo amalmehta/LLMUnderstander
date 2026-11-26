@@ -373,7 +373,7 @@ Asked and answered (2026-10-02):
 - Native SwiftUI Mac app (not web views). The website is a later, separate step.
 - Building blocks run on a real tiny model that trains live in the app. Pretraining at scale and post-training are interactive simulations on toy data, using the real update maths.
 - "pretraining, training, posttraining" reads as: the core training loop, pretraining at scale, then SFT + preference tuning. 13-chapter outline approved.
-- Private GitHub repo "LLMUnderstander". The feedback tab opens a pre-filled GitHub issue.
+- GitHub repo "LLMUnderstander", private at first and public since the website moved to GitHub Pages. The feedback tab opens a pre-filled GitHub issue.
 
 Decided without asking:
 - Model: 2 blocks, 2 heads, width 32, context 32, character-level, about 28k weights, trained with AdamW, warm-up + cosine decay and gradient clipping. About 1,500 steps takes roughly a minute on this Mac.
@@ -389,8 +389,32 @@ Decided without asking: the scenario is a coding agent fixing a failing test; to
 Improvements round (2026-10-04, user asked for 3 improvements; chosen without asking): saving the trained model between launches; UI tests that click through the app (computer-use access had been declined, so they replace hand-testing); a generated app icon. Also added on request: Chapter 18 "Workflows & Bandits" (six workflow patterns, voting/best-of-n calculator, live four-strategy bandit race). Optimizer momentum isn't saved with the model; resuming rebuilds it within a few steps.
 Found while building the UI tests and fixed: animation timers ran every 30 ms even on idle pages (now they only run while something animates), and the Next button on the tool-use page moved while text typed out. Screenshots retaken in light mode.
 
-Website (asked and answered 2026-10-04): static site in web/ (TypeScript + Preact, Vite builds one self-contained HTML file), full parity with all 18 chapters, published as a private Artifact page (https://claude.ai/artifact/Ca1hMZNGCnTQHBocixMSeB), feedback tab opens a GitHub issue.
+Website (asked and answered 2026-10-04): static site in web/ (TypeScript + Preact, Vite builds one self-contained HTML file), full parity with all 18 chapters, first published as a private Artifact page (https://claude.ai/artifact/Ca1hMZNGCnTQHBocixMSeB), now on GitHub Pages (https://amalmehta.github.io/LLMUnderstander/), feedback tab opens a GitHub issue.
 Decided without asking: training runs in short time slices on the main thread (no Web Worker) so it works inside the Artifact frame; the trained model is kept in the browser's local storage (`?fresh` in the URL starts untrained); the browser uses its own seeded RNG, so its toy data and runs differ in detail from the Mac app but are tested for the same behaviour; charts are hand-written SVG (no chart library); the 16 remaining chapters were ported in parallel by four helper agents, then checked together in a browser.
+
+Distribution (decided 2026-11): the Mac app is released on GitHub Releases as a universal build, signed with a Developer ID and notarized by Apple, made by scripts/release-mac-app.sh. Version 1.0 was the first release; 1.1 ships the round below.
+
+Review round (asked and answered 2026-11-26): the user ran the "0, 5, 15" shortcut and chose all 20 items.
+- Three new chapters: 13 Reasoning Models (after Learning from Preferences), 14 Evals (before The Full Pipeline), 16 Inference (after it). 21 chapters in all.
+- Mac app first, then the same changes on the website in the same round.
+- One optional guess per chapter: pick what you expect before a live demo, running it reveals the answer and why.
+- A pull request per batch (CI and docs, Mac improvements, new chapters, website), then a notarized 1.1 release.
+Also done because the meta-instructions mark them always in scope and they were missing: docs/SYSTEM-DESIGN.md, docs/PROMPTS.md, a Settings window (⌘,) and an opening animation.
+
+DEFINITIONS AND DEFERRED:
+
+Done criteria for the 2026-11-26 round:
+- "Trained": validation loss at or below 60% of the random-guessing loss (log of the vocabulary size). The banner shows both numbers.
+- "Tests run in CI": every push and pull request runs the website's Vitest suite and type check, and the Swift engine tests on a macOS runner; the website deploys only if its tests pass.
+- "Reasoning Models": real GRPO updates on a toy policy that picks how many thinking steps to take before answering arithmetic problems, with a verifiable checker. Groups of 8 answers per problem, advantage = (reward − group mean) ÷ group standard deviation. With the default seed, accuracy rises by at least 25 points and the average number of thinking steps rises within 150 updates (a unit test checks this). Groups where every answer gets the same reward are shown to carry no learning signal.
+- "Evals": a fixed 40-item word-completion benchmark scored on the real tiny model every 100 training steps. The chapter shows smooth loss next to jumpy exact-match accuracy (the "emergence is a metric choice" effect, Schaeffer et al. 2023), and the standard error of a score as a function of benchmark size, sqrt(p(1−p)/n).
+- "Inference": sampling from the real tiny model with temperature and top-p, showing which tokens each setting keeps; the KV cache as counted attention work per generated token with and without a cache, from the model's own sizes; speculative decoding as the expected tokens per verification step, (1 − α^(k+1)) ÷ (1 − α) (Leviathan et al. 2023), labelled as a formula, not a measurement.
+- "Progress remembered": a chapter counts as read once it has been open for 20 seconds or scrolled to its end; the sidebar shows a tick, and the app reopens on the last chapter. Stored on this Mac only (UserDefaults; local storage on the web), with a Reset button in Settings.
+- "VoiceOver": every chart, heatmap and landscape has a label and a value summary that reads out the numbers it shows.
+- "Same run on both platforms": the Mac app and the website use the same seeded random number generator (SplitMix64) and corpus, and a shared fixture checks that both produce the same first ten training losses to 4 decimal places.
+- "Smooth": no interaction blocks the main thread for more than 100 ms; website training runs in a Web Worker.
+
+Deferred: distillation, mixture of experts and quantization chapters; a real KV cache inside the tiny model (the chapter counts work instead of timing it); LLM-as-judge demos; automatic update checks in the Mac app; localisation.
 
 CHANGELOG:
 
@@ -414,3 +438,6 @@ CHANGELOG:
 - 2026-10-04 — model saved between launches; UI test suite; app icon; Chapter 18 Workflows & Bandits; idle-CPU and jumping-button fixes
 - 2026-10-04 — website version (18 chapters, in-browser training) in web/, published as an Artifact page; fixed stale "Chapters 14–17" text
 - 2026-11-09 — updated the meta-instructions to the current meta doc
+- 2026-11 — website moved to GitHub Pages; repo made public
+- 2026-11-26 — release script for a signed, notarized Mac app; v1.1
+- 2026-11-26 — review round: Reasoning Models, Evals and Inference chapters; progress, guesses, Settings, opening animation; CI tests; VoiceOver; website in a Web Worker

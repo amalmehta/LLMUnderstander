@@ -66,9 +66,17 @@ llm understander/
 │   │   ├── ui/kit.tsx, ui/charts.tsx  Shared components and SVG charts
 │   │   └── chapters/              One file per chapter
 │   └── tests/engine.test.ts       Engine tests (Vitest)
+├── scripts/
+│   ├── release-mac-app.sh       Signed, notarized universal build; --publish makes a GitHub Release
+│   └── take-screenshots.sh      Retakes docs/screenshots from a fresh build
+├── .github/workflows/
+│   ├── ci.yml                   Website and engine tests on every push and pull request
+│   └── pages.yml                Tests, builds and deploys the website to GitHub Pages
 └── docs/
     ├── INSTRUCTIONS.md          Setup, run, use
     ├── FILE-STRUCTURE.md        This file
+    ├── SYSTEM-DESIGN.md         Architecture, data, decisions, threat model, limits
+    ├── PROMPTS.md               Every prompt, by session
     └── screenshots/             One PNG per chapter
 ```
 
