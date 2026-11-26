@@ -33,6 +33,20 @@ if ! xcrun notarytool history --keychain-profile "$NOTARY_PROFILE" >/dev/null 2>
   exit 1
 fi
 VERSION=$(sed -n 's/^ *MARKETING_VERSION: *"\{0,1\}\([0-9.]*\)"\{0,1\}/\1/p' project.yml | head -1)
+WEB_VERSION=$(sed -n 's/^ *"version": *"\([0-9.]*\)".*/\1/p' web/package.json | head -1)
+if [ "$WEB_VERSION" != "$VERSION" ] && [ "$WEB_VERSION" != "$VERSION.0" ]; then
+  echo "Version mismatch: project.yml says $VERSION, web/package.json says $WEB_VERSION." >&2
+  exit 1
+fi
+if [ "${1:-}" = "--publish" ]; then
+  # The README shows the screenshots, so they must not be older than the app's code.
+  SHOTS=$(git log -1 --format=%ct -- docs/screenshots)
+  CODE=$(git log -1 --format=%ct -- LLMUnderstander)
+  if [ "$SHOTS" -lt "$CODE" ]; then
+    echo "docs/screenshots is older than the latest app change. Run scripts/take-screenshots.sh and commit first." >&2
+    exit 1
+  fi
+fi
 echo "Building $APP_NAME $VERSION, signed as: $IDENTITY"
 
 rm -rf "$OUT"

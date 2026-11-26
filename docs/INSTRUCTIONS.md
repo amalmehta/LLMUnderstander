@@ -28,7 +28,7 @@ Get `LLM-Understander.zip` from the [latest release](https://github.com/amalmeht
 
 ## Make a release
 
-Bump `MARKETING_VERSION` in `project.yml` (and run `xcodegen`), then:
+Bump `MARKETING_VERSION` in `project.yml` (and run `xcodegen`) and `version` in `web/package.json` to match; the script stops if they differ. Then:
 
 ```bash
 scripts/release-mac-app.sh --publish
@@ -96,6 +96,8 @@ Notes:
 xcodebuild -project "LLM Understander.xcodeproj" -scheme "LLM Understander" -derivedDataPath build/dd test -test-timeouts-enabled YES -default-test-execution-time-allowance 240
 ```
 
+Every push and pull request runs the engine tests and the website tests on GitHub Actions (`.github/workflows/ci.yml`), and the website deploys only if its tests pass. The UI tests run only locally, since they need a logged-in screen.
+
 There are two test suites: 16 engine tests (fast) and 8 UI tests that launch the app and click through it (about 5 minutes; UI tests need the Mac unlocked, and the app will take the screen while they run). To run only the engine tests, add `-only-testing:"Engine Tests"`.
 
 The engine tests cover:
@@ -116,7 +118,7 @@ The UI tests open all 18 chapters and use the main controls in each: training, b
 ## Regenerate the screenshots
 
 ```bash
-"build/dd/Build/Products/Release/LLM Understander.app/Contents/MacOS/LLM Understander" --snapshots docs/screenshots
+scripts/take-screenshots.sh
 ```
 
-This trains the model, visits every chapter and saves one PNG per chapter.
+This builds the app, trains the model, visits every chapter and saves one PNG per chapter to `docs/screenshots`. The terminal needs Screen Recording permission. `scripts/release-mac-app.sh --publish` refuses to run while the screenshots are older than the latest change to the app's code.

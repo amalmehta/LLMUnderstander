@@ -25,7 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - run: npm ci && npm run build
+      # Deploy only a build whose tests pass.
+      - run: npm ci && npm test && npm run build
         working-directory: web
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
