@@ -22,6 +22,20 @@ open "build/dd/Build/Products/Release/LLM Understander.app"
 
 To install it, drag `LLM Understander.app` from `build/dd/Build/Products/Release/` into `/Applications`.
 
+## Download it
+
+Get `LLM-Understander.zip` from the [latest release](https://github.com/amalmehta/LLMUnderstander/releases/latest), unzip it and move **LLM Understander** to Applications. It's signed with a Developer ID and notarized by Apple, so it opens like any other app.
+
+## Make a release
+
+Bump `MARKETING_VERSION` in `project.yml` (and run `xcodegen`), then:
+
+```bash
+scripts/release-mac-app.sh --publish
+```
+
+It builds a universal app, signs it with the Developer ID Application certificate and the hardened runtime, notarizes and staples it, and attaches `LLM-Understander.zip` to a new GitHub Release named after the version. The top of the script lists the one-time setup: the certificate and a `notarytool` keychain profile.
+
 ## The website
 
 The same 18 chapters also run as a website, in `web/` (Preact + TypeScript, built with Vite into one self-contained HTML file). Everything runs in the browser, including training the tiny model.
