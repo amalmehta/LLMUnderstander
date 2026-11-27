@@ -1,25 +1,26 @@
 # LLM Understander
 
-A Mac app that teaches how a large language model is trained, from tokens to RLHF, and how it becomes an agent inside a harness. It does this with live visualizations driven by a real tiny transformer that trains on your Mac.
+A Mac app that teaches how a large language model is trained, from tokens to RLHF and reasoning, and how it becomes an agent inside a harness. It does this with live visualizations driven by a real tiny transformer that trains on your Mac. Start with the Tour: scroll one sentence through the whole chain.
 
-![The Training Loop](docs/screenshots/09%20The%20Training%20Loop.png)
+![The Tour](docs/screenshots/00%20Tour.png)
 
-**Also on the web:** the same 18 chapters as a website that trains the model in your browser — [open LLM Understander on the web](https://amalmehta.github.io/LLMUnderstander/).
+**Also on the web:** the same Tour and 21 chapters as a website that trains the model in your browser — [open LLM Understander on the web](https://amalmehta.github.io/LLMUnderstander/).
 
 ![The website](docs/screenshots/Website.jpg)
 
 | | |
 |---|---|
-| ![The Big Picture](docs/screenshots/01%20The%20Big%20Picture.png) | ![Attention](docs/screenshots/04%20Attention.png) |
+| ![The Training Loop](docs/screenshots/09%20The%20Training%20Loop.png) | ![Attention](docs/screenshots/04%20Attention.png) |
 | ![The Transformer Block](docs/screenshots/05%20The%20Transformer%20Block.png) | ![The Optimizer](docs/screenshots/08%20The%20Optimizer.png) |
-| ![Learning from Preferences](docs/screenshots/12%20Learning%20from%20Preferences.png) | ![The Full Pipeline](docs/screenshots/13%20The%20Full%20Pipeline.png) |
-| ![From Model to Agent](docs/screenshots/14%20From%20Model%20to%20Agent.png) | ![The Harness](docs/screenshots/15%20The%20Harness.png) |
-| ![Training Models to Be Agents](docs/screenshots/17%20Training%20Models%20to%20Be%20Agents.png) | ![Workflows & Bandits](docs/screenshots/18%20Workflows%20%26%20Bandits.png) |
+| ![Learning from Preferences](docs/screenshots/12%20Learning%20from%20Preferences.png) | ![Reasoning Models](docs/screenshots/13%20Reasoning%20Models.png) |
+| ![Evals](docs/screenshots/14%20Evals.png) | ![Inference](docs/screenshots/16%20Inference.png) |
+| ![The Harness](docs/screenshots/18%20The%20Harness.png) | ![Workflows & Bandits](docs/screenshots/21%20Workflows%20%26%20Bandits.png) |
 
-## The 18 chapters
+## The 21 chapters
 
 ```mermaid
 flowchart LR
+    T[Tour] --> A
     A[1 Big Picture] --> B
     subgraph B[Building Blocks]
         B2[2 Tokens] --> B3[3 Embeddings] --> B4[4 Attention] --> B5[5 Transformer Block]
@@ -31,12 +32,15 @@ flowchart LR
     C --> D[10 Pretraining at Scale]
     D --> E
     subgraph E[Post-training]
-        E11[11 SFT] --> E12[12 RLHF & DPO]
+        E11[11 SFT] --> E12[12 RLHF & DPO] --> E13[13 Reasoning Models]
     end
-    E --> F[13 Full Pipeline]
+    E --> F
+    subgraph F[Putting It Together]
+        F14[14 Evals] --> F15[15 Full Pipeline] --> F16[16 Inference]
+    end
     F --> G
     subgraph G[Agents & Harnesses]
-        G14[14 Model to Agent] --> G15[15 The Harness] --> G16[16 Tool Use] --> G17[17 Training Agents] --> G18[18 Workflows & Bandits]
+        G17[17 Model to Agent] --> G18[18 The Harness] --> G19[19 Tool Use] --> G20[20 Training Agents] --> G21[21 Workflows & Bandits]
     end
 ```
 

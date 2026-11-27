@@ -102,7 +102,6 @@ struct TourView: View {
         }
         .opacity(active ? 1 : 0.35)
         .animation(.easeOut(duration: 0.2), value: active)
-        .accessibilityElement(children: .combine)
     }
 
     private var ending: some View {

@@ -33,7 +33,8 @@ final class AppUITests: XCTestCase {
 
     /// Any element whose accessibility label contains `s` (headings and combined captions aren't static texts).
     private func waitForLabel(_ s: String, timeout: TimeInterval = 20, file: StaticString = #filePath, line: UInt = #line) {
-        let el = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", s)).firstMatch
+        // On macOS a static text's words are its value; a combined element's are its label.
+        let el = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", s, s)).firstMatch
         XCTAssertTrue(el.waitForExistence(timeout: timeout), "never saw a label containing “\(s)”", file: file, line: line)
     }
 
@@ -52,12 +53,11 @@ final class AppUITests: XCTestCase {
 
     func testOpensOnTheTourAndScrolls() {
         // A fresh install starts on the Tour.
-        waitForLabel("One sentence, all the way through")
-        let scroll = app.scrollViews.firstMatch
-        let stage = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", "Tour stage:")).firstMatch
+        waitFor("One sentence, all the way through")
+        let stage = app.otherElements.matching(NSPredicate(format: "label BEGINSWITH %@", "Tour stage:")).firstMatch
         XCTAssertTrue(stage.waitForExistence(timeout: 5))
         XCTAssertTrue(stage.label.contains("It starts as text"))
-        for _ in 0..<6 { scroll.scroll(byDeltaX: 0, deltaY: -400) }
+        for _ in 0..<6 { stage.scroll(byDeltaX: 0, deltaY: -400) }   // the first scroll view is the sidebar
         sleep(1)
         XCTAssertFalse(stage.label.contains("It starts as text"), "scrolling should move the stage on (now: \(stage.label))")
         app.menuBars.menuBarItems["Chapters"].click()
@@ -69,7 +69,8 @@ final class AppUITests: XCTestCase {
         open(4, "Attention")
         button("No").click()
         waitFor("causal mask hides")
-        button("Guess again").click()
+        // A link-styled button may be exposed as a link, so find it by name whatever its type.
+        app.descendants(matching: .any).matching(NSPredicate(format: "label == %@ OR title == %@", "Guess again", "Guess again")).firstMatch.click()
         XCTAssertTrue(button("Yes").waitForExistence(timeout: 5))
     }
 

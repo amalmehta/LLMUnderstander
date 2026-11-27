@@ -22,7 +22,8 @@ struct TourStage: View {
         }
         .task(id: app.trainer.snapshotVersion) { data = TourData(trainer: app.trainer) }
         .animation(.easeInOut(duration: 0.25), value: step)
-        .accessibilityElement(children: .combine)
+        // One element with a plain label: VoiceOver gets the step, and walking the popping pieces costs nothing.
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel("Tour stage: \(TourStep.all[step].title)")
     }
 
