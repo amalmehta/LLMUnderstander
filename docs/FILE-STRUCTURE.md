@@ -9,7 +9,9 @@ llm understander/
 ├── LLMUnderstander/             App source
 │   ├── App/
 │   │   ├── LLMUnderstanderApp.swift   App entry, window, sidebar, menus
-│   │   ├── Chapter.swift              The 18 chapters, their sections, and shared app state
+│   │   ├── Chapter.swift              The Tour and 21 chapters, their sections, and shared app state (progress, guesses)
+│   │   ├── Guesses.swift              The "Guess first" question for each chapter
+│   │   ├── SettingsView.swift         Settings window (⌘,): what's stored, reset model or progress
 │   │   ├── Feedback.swift             Feedback tab and sheet (opens a GitHub issue)
 │   │   └── Snapshotter.swift          --snapshots mode that saves README screenshots
 │   ├── Engine/                  The learning machinery (no UI)
@@ -21,10 +23,17 @@ llm understander/
 │   │   ├── Corpus.swift               Generated training and validation text
 │   │   ├── PreferenceToys.swift       SFT, reward model, RLHF and DPO on a toy 8-answer policy
 │   │   ├── AgentToys.swift            Scripted agent run, context-budget model, agent RL (REINFORCE)
+│   │   ├── ChatTuning.swift           SFT of the reader's own model on question → answer demonstrations
+│   │   ├── Reasoning.swift            GRPO on a toy reasoning policy (thinking length → accuracy)
+│   │   ├── Benchmark.swift            40-item word-completion benchmark, exact match and per character
+│   │   ├── InferenceMaths.swift       KV-cache work counts, speculative decoding, top-p
 │   │   ├── Bandits.swift              Multi-armed bandit strategies, Beta sampling, voting / best-of-n maths
 │   │   └── Landscapes.swift           2-D loss surfaces, scaling law, parameter counts, number formatting
 │   ├── UI/
-│   │   └── Components.swift           Page layout, cards, heatmaps, probability bars, banners
+│   │   └── Components.swift           Page layout, cards, heatmaps, probability bars, banners, the guess card
+│   ├── Tour/
+│   │   ├── TourView.swift             The scroll-driven Tour: 15 steps, captions, pinned stage
+│   │   └── TourStage.swift            The 15 animated scenes, using the reader's own model
 │   └── Chapters/                One file per chapter, in reading order
 │       ├── BigPictureChapter.swift
 │       ├── TokensChapter.swift
@@ -38,7 +47,10 @@ llm understander/
 │       ├── PretrainingChapter.swift
 │       ├── SFTChapter.swift
 │       ├── PreferencesChapter.swift
+│       ├── ReasoningChapter.swift
+│       ├── EvalsChapter.swift
 │       ├── PipelineChapter.swift
+│       ├── InferenceChapter.swift
 │       ├── AgentLoopChapter.swift     (also the shared transcript bubble and loop diagram)
 │       ├── HarnessChapter.swift
 │       ├── ToolUseChapter.swift
@@ -46,21 +58,27 @@ llm understander/
 │       └── WorkflowsChapter.swift
 │   └── Assets.xcassets/         App icon (generated: causal-attention triangle)
 ├── Tests/
-│   └── EngineTests.swift        Gradient checks and behaviour tests for the engine
+│   ├── EngineTests.swift        Gradient checks and behaviour tests for the engine
+│   └── Fixtures/first-losses.json  First ten training losses; both engines must reproduce them
 ├── UITests/
 │   └── AppUITests.swift         Launches the app and clicks through every chapter
-├── web/                         The website version (same 18 chapters)
+├── web/                         The website version (same Tour and 21 chapters)
 │   ├── index.html                 Page shell (fonts, title)
 │   ├── vite.config.ts             Builds everything into one HTML file
 │   ├── scripts/make-artifact.mjs  Turns the build into an Artifact page
 │   ├── src/
-│   │   ├── main.tsx, app.tsx      Entry point; sidebar, phone drawer, chapter routing (#chapter-id), feedback tab
+│   │   ├── main.tsx, app.tsx      Entry point; sidebar, phone drawer, chapter routing (#chapter-id), feedback, settings, opening
+│   │   ├── progress.ts            Chapters read, guesses, last chapter (local storage)
+│   │   ├── guesses.ts             The "Guess first" questions (same as Guesses.swift)
 │   │   ├── chapters.ts            The 18 chapters and their sections
 │   │   ├── styles.css             Design tokens (light and dark) and all styles
 │   │   ├── engine/                The Swift engine, ported to TypeScript
 │   │   │   ├── tensor.ts            Autograd tensor, ops, seeded RNG
 │   │   │   ├── model.ts             Corpus, tokenizers (char + BPE), TinyGPT, optimizers, LR schedule
-│   │   │   ├── trainer.ts           In-browser training loop (time-sliced), saved to local storage
+│   │   │   ├── run.ts               The training loop itself (no UI): steps, checkpoints, save/resume state
+│   │   │   ├── train.worker.ts      Runs the training loop in a Web Worker
+│   │   │   ├── trainer.ts           The page's view of training; falls back to time slices without a worker
+│   │   │   ├── benchmark.ts, chatTuning.ts, reasoning.ts, inference.ts   Same as their Swift namesakes
 │   │   │   ├── toys.ts              SFT / reward model / RLHF / DPO toy, loss landscapes, scaling law
 │   │   │   └── agents.ts            Agent run script, context budget, agent RL, bandits, voting maths
 │   │   ├── ui/kit.tsx, ui/charts.tsx  Shared components and SVG charts

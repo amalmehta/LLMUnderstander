@@ -40,7 +40,7 @@ flowchart TB
 
 ## Main flows
 
-1. **Train.** Chapter 9 starts the worker. Each step: take a batch, forward pass, cross-entropy loss, backward pass, gradient clipping, AdamW update with warm-up and cosine decay. Every 100 steps the worker sends a frozen copy of the model to the main actor. Chapters 3–7, 10, 14 and 16 look inside that copy, so they always show the reader's own model.
+1. **Train.** Chapter 9 starts the worker. Each step: take a batch, forward pass, cross-entropy loss, backward pass, gradient clipping, AdamW update with warm-up and cosine decay. Every 100 steps the worker sends a frozen copy of the model to the main actor. Chapters 3–7, 10, 11, 14 and 16 and the Tour look inside that copy, so they always show the reader's own model.
 2. **Save and resume.** When training stops, the weights, optimizer state and chart history are saved. On launch they are restored if the model shape matches.
 3. **Read.** A chapter counts as read after 20 seconds open or when scrolled to its end. The sidebar shows a tick and the app reopens on the last chapter.
 4. **Guess.** One card per chapter asks what the reader expects before a live demo. The answer stays hidden until they pick or run it.
