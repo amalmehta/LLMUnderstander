@@ -137,12 +137,15 @@ struct Card<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             if let title {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.headline)
+                    Text(title).font(.headline).accessibilityAddTraits(.isHeader)
                     if let subtitle { Text(subtitle).font(.subheadline).foregroundStyle(.secondary) }
                 }
             }
             content
         }
+        // VoiceOver: the card is a named group, so each chart inside is announced with the card's title.
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(title ?? "")
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: 14).fill(Color(nsColor: .controlBackgroundColor)))
@@ -159,6 +162,7 @@ struct StatTile: View {
             Text(label).font(.caption).foregroundStyle(.secondary)
             Text(value).font(.system(.title3, design: .rounded).weight(.semibold)).foregroundStyle(color)
                 .monospacedDigit()
+                .contentTransition(.numericText())
         }
         .padding(.horizontal, 12).padding(.vertical, 8)
         .frame(minWidth: 110, alignment: .leading)
@@ -239,7 +243,22 @@ struct Heatmap: View {
     var cell: CGFloat = 18
     var highlightRow: Int? = nil
     var showNumbers = false
+    var accessibilityName = "Heatmap"
     var onSelectRow: ((Int) -> Void)? = nil
+
+    /// What VoiceOver reads: the selected row's values, or each row's strongest cell.
+    private var spokenSummary: String {
+        func label(_ list: [String], _ i: Int) -> String { i < list.count ? list[i] : "\(i + 1)" }
+        func spoken(_ l: String) -> String { l == "␣" ? "space" : (l == "↵" ? "newline" : l) }
+        if let h = highlightRow, h < values.count {
+            let cells = values[h].enumerated().map { "\(spoken(label(colLabels, $0.offset))) \(String(format: "%.2f", $0.element))" }
+            return "Row \(spoken(label(rowLabels, h))): " + cells.joined(separator: ", ")
+        }
+        return values.enumerated().prefix(16).map { r, row in
+            let best = row.indices.max { abs(row[$0]) < abs(row[$1]) } ?? 0
+            return "\(spoken(label(rowLabels, r))): strongest \(spoken(label(colLabels, best))) \(String(format: "%.2f", row.isEmpty ? 0 : row[best]))"
+        }.joined(separator: "; ")
+    }
 
     var body: some View {
         let rows = values.count, cols = values.first?.count ?? 0
@@ -278,6 +297,14 @@ struct Heatmap: View {
             let r = Int((e.location.y - labelH) / cell)
             if r >= 0 && r < rows { onSelectRow?(r) }
         })
+        .accessibilityElement()
+        .accessibilityLabel("\(accessibilityName), \(rows) rows by \(cols) columns")
+        .accessibilityValue(spokenSummary)
+        .accessibilityAdjustableAction { dir in
+            guard let onSelectRow, rows > 0 else { return }
+            let h = highlightRow ?? 0
+            onSelectRow(dir == .increment ? min(rows - 1, h + 1) : max(0, h - 1))
+        }
     }
 }
 

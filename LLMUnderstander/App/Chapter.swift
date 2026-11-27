@@ -129,6 +129,8 @@ final class AppState {
     var showFeedback = false
     /// Screenshot runs and tests start from a fresh, unsaved model so they're repeatable.
     let trainer = Trainer(saveURL: AppState.isAutomated ? nil : Trainer.defaultSaveURL)
+    /// Fine-tuning the reader's own model in the SFT chapter; kept here so it survives changing chapters.
+    let chatTuning = ChatTuningSession()
 
     static var isAutomated: Bool {
         let args = CommandLine.arguments

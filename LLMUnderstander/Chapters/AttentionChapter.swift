@@ -39,7 +39,7 @@ struct AttentionChapter: View {
                     }
                     ScrollView(.horizontal) {
                         Heatmap(values: trace.attention[layer][head], rowLabels: labels, colLabels: labels,
-                                cell: 19, highlightRow: q) { query = $0 }
+                                cell: 19, highlightRow: q, accessibilityName: "Attention weights, layer \(layer + 1) head \(head + 1)") { query = $0 }
                             .padding(4)
                     }
                     Text("The empty upper-right triangle is the **causal mask**: a token may only look backwards. Otherwise, during training, it could simply read the answer it is supposed to predict.")

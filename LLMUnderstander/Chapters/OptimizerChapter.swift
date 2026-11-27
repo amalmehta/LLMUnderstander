@@ -137,5 +137,11 @@ struct LandscapeCanvas: View {
             ctx.draw(Text("start").font(.caption.bold()).foregroundColor(.white), at: CGPoint(x: st.x, y: st.y - 14))
         }
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .accessibilityElement()
+        .accessibilityLabel("Loss landscape with \(paths.count) optimizer paths")
+        .accessibilityValue(paths.keys.sorted { $0.rawValue < $1.rawValue }.map { k in
+            let pts = paths[k]!, p = pts[min(progress, pts.count - 1)]
+            return "\(k.rawValue): loss \(String(format: "%.3f", landscape.value(p.0, p.1))) after \(min(progress, pts.count - 1)) steps"
+        }.joined(separator: "; "))
     }
 }

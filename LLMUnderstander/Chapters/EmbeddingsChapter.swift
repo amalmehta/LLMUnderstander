@@ -30,11 +30,11 @@ struct EmbeddingsChapter: View {
                     let sum = zip(tokE, posE).map { zip($0, $1).map(+) }
                     ScrollView(.horizontal) {
                         HStack(alignment: .top, spacing: 14) {
-                            labelled("what token is it?", Heatmap(values: tokE, rowLabels: labels, diverging: true, cell: 11))
+                            labelled("what token is it?", Heatmap(values: tokE, rowLabels: labels, diverging: true, cell: 11, accessibilityName: "Token embeddings"))
                             Text("+").font(.title).padding(.top, 30)
-                            labelled("where is it?", Heatmap(values: posE, rowLabels: (0..<ids.count).map { "\($0)" }, diverging: true, cell: 11))
+                            labelled("where is it?", Heatmap(values: posE, rowLabels: (0..<ids.count).map { "\($0)" }, diverging: true, cell: 11, accessibilityName: "Position embeddings"))
                             Text("=").font(.title).padding(.top, 30)
-                            labelled("what the transformer receives", Heatmap(values: sum, rowLabels: labels, diverging: true, cell: 11))
+                            labelled("what the transformer receives", Heatmap(values: sum, rowLabels: labels, diverging: true, cell: 11, accessibilityName: "Token plus position"))
                         }
                     }
                 }

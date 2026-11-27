@@ -45,6 +45,13 @@ struct BigPictureChapter: View {
 
             KeyIdea("Learn the loop once and you understand every stage. Chapters 2–5 build the model, 6–9 show how it learns, 10–12 show how that loop is used at scale and then reshaped into an assistant.")
 
+            GoDeeper(title: "what \"a probability for every next token\" means") {
+                Formula("p(text) = p(x₁) · p(x₂ | x₁) · p(x₃ | x₁, x₂) · … · p(xₙ | x₁ … xₙ₋₁)")
+                Prose("**xᵢ** is the i-th token. This is the chain rule of probability, and it's exact: the chance of a whole text is the chance of each token given everything before it, multiplied together. So a model that predicts *one* next token well can score, and write, *any* text, one token at a time.")
+                Prose("**Why that's enough to learn so much.** To guess the next word of a physics textbook, a recipe or a proof, it helps to know physics, cooking or maths. Nothing tells the model to learn facts or grammar; it picks them up because they make the next token easier to guess. This only works with enormous amounts of text, which is why pretraining is so big.")
+                Prose("**The score is surprise.** Training minimises the *cross-entropy loss*: the average of −log p(the token that actually came next). A model that gives the right token probability 1 scores 0; one that guesses evenly among the \(CharTokenizer.shared.size) characters our tiny model knows scores log \(CharTokenizer.shared.size) ≈ \(String(format: "%.1f", log(Double(CharTokenizer.shared.size)))). Chapter 6 shows it live.")
+            }
+
             Card(title: "There's a real model inside this app") {
                 Prose("Most pictures in this app are not drawings — they are computed live by a tiny GPT (a few tens of thousands of weights) that runs on this Mac. It starts out knowing nothing. In **Chapter 9** you can train it and watch it learn English-like sentences in about a minute. Once trained, the tokens, embeddings, attention and predictions in the other chapters all come from it.")
             }

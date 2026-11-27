@@ -131,6 +131,9 @@ struct HarnessChapter: View {
             }
             .frame(height: 30)
             .clipShape(RoundedRectangle(cornerRadius: 6))
+            .accessibilityElement()
+            .accessibilityLabel("Context window")
+            .accessibilityValue("\(Int(used).formatted()) of \(Int(ContextBudget.window).formatted()) tokens used" + (used > ContextBudget.window ? ", over the limit" : ""))
             HStack(spacing: 14) {
                 ForEach(r.segments) { s in
                     HStack(spacing: 5) {

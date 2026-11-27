@@ -2,6 +2,7 @@ import SwiftUI
 import Charts
 
 struct SFTChapter: View {
+    @Environment(AppState.self) private var app
     @State private var showMask = true
     @State private var logits = PostTraining.baseLogits
     @State private var lossHistory: [Point] = [Point(x: 0, y: PostTraining.sftLoss(PostTraining.baseLogits))]
@@ -45,7 +46,9 @@ struct SFTChapter: View {
                     .font(.callout).foregroundStyle(.secondary)
             }
 
-            Card(title: "Live: fine-tune a toy model", subtitle: "A simplified model that chooses between 8 whole answers to \"\(PostTraining.prompt)\". The update is the real cross-entropy gradient.") {
+            OwnModelTuning()
+
+            Card(title: "A simpler picture: 8 whole answers", subtitle: "A toy model that chooses between 8 whole answers to \"\(PostTraining.prompt)\". The update is the real cross-entropy gradient.") {
                 HStack(alignment: .top, spacing: 20) {
                     VStack(alignment: .leading) {
                         Chart(PostTraining.answers) { a in
@@ -103,5 +106,79 @@ struct SFTChapter: View {
             logits = PostTraining.sftStep(logits, lr: lr)
             lossHistory.append(Point(x: Double(lossHistory.count), y: PostTraining.sftLoss(logits)))
         }
+    }
+}
+
+/// SFT on the reader's own tiny model: teach it to answer "what does … <verb>" questions.
+private struct OwnModelTuning: View {
+    @Environment(AppState.self) private var app
+
+    var body: some View {
+        let t = app.trainer, session = app.chatTuning
+        Card(title: "Live: fine-tune your own model", subtitle: "Your model has only ever seen sentences, never a question. \(ChatTuning.demonstrationCount) demonstrations show it how to answer one.") {
+            if !t.isTrained {
+                ModelStatusBanner()
+                Text("Fine-tuning starts from a pretrained model. Train it first (about a minute), then come back.")
+                    .font(.callout).foregroundStyle(.secondary)
+            } else {
+                HStack(alignment: .top, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("A demonstration").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                        let e = ChatTuning.demonstrations[0]
+                        (Text(e.question + " ↵ ").foregroundStyle(.secondary) + Text(e.answer).foregroundStyle(.pink))
+                            .font(.system(size: 13, design: .monospaced))
+                        Text("Grey = the question (read, not graded). Pink = the answer (graded). The newline marks where the answer starts, standing in for the role tokens above.")
+                            .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        HStack {
+                            Button { session.isRunning ? session.stop() : session.start() } label: {
+                                Label(session.isRunning ? "Pause" : (session.step == 0 ? "Fine-tune \(ChatTuner.suggestedSteps) steps" : "Resume"),
+                                      systemImage: session.isRunning ? "pause.fill" : "play.fill")
+                            }
+                            .buttonStyle(.borderedProminent).tint(.pink)
+                            .disabled(session.finished)
+                            Button("Start over") { session.restart(base: t.snapshot, version: t.snapshotVersion) }
+                                .disabled(session.isRunning || session.step == 0)
+                        }
+                        .padding(.top, 6)
+                        Chart(session.loss) { LineMark(x: .value("step", $0.x), y: .value("loss", $0.y)).foregroundStyle(.pink) }
+                            .chartXScale(domain: 0...Double(ChatTuner.suggestedSteps))
+                            .chartXAxisLabel("fine-tuning steps").chartYAxisLabel("loss on answers")
+                            .frame(height: 110)
+                            .accessibilityLabel("Fine-tuning loss")
+                            .accessibilityValue(session.loss.last.map { String(format: "%.2f after %d steps", $0.y, Int($0.x)) } ?? "not started")
+                    }
+                    .frame(width: 330, alignment: .leading)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Questions it never saw").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                        Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 8) {
+                            GridRow {
+                                Text("").gridColumnAlignment(.leading)
+                                Text("Before").font(.caption).foregroundStyle(.secondary)
+                                Text(session.step == 0 ? "After" : "After \(session.step) steps").font(.caption).foregroundStyle(.secondary)
+                            }
+                            ForEach(session.rows) { r in
+                                GridRow(alignment: .top) {
+                                    Text(r.question).font(.system(size: 12, design: .monospaced))
+                                    Text(r.before).font(.system(size: 12, design: .monospaced)).foregroundStyle(.secondary).lineLimit(2)
+                                    Text(r.after ?? "—").font(.system(size: 12, design: .monospaced))
+                                        .foregroundStyle(r.after.map { ChatTuning.startsWithSubject($0, question: r.question) } == true ? .primary : .secondary)
+                                        .lineLimit(2)
+                                }
+                            }
+                        }
+                        HStack(spacing: 10) {
+                            StatTile(label: "Answers about the right subject", value: "\(session.subjectCount) of \(session.rows.count)", color: .pink)
+                            StatTile(label: "Also using the right verb", value: "\(session.verbCount) of \(session.rows.count)", color: .green)
+                        }
+                    }
+                }
+                Text("Expect it to learn the **format** fast (answer on a new line, with a sentence about the question's subject) and the **verb** less reliably. A 28k-weight model has to copy words from 20 characters back, which is hard at its size. Real SFT shows the same split: format and style come quickly, new skills don't.")
+                    .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .onAppear { if t.isTrained { session.prepare(base: t.snapshot, version: t.snapshotVersion) } }
+        .onChange(of: t.snapshotVersion) { if t.isTrained && !t.isRunning { session.prepare(base: t.snapshot, version: t.snapshotVersion) } }
+        .onChange(of: t.isTrained) { if t.isTrained { session.prepare(base: t.snapshot, version: t.snapshotVersion) } }
     }
 }

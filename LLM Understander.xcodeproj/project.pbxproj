@@ -25,6 +25,7 @@
 		6FE21E9C35EAC0151C6F1238 /* Snapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D2B130E5CC9C0553713F30 /* Snapshotter.swift */; };
 		73D3623D63B11A0D4B563767 /* AgentToys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5013B416D06FC58A30E370E9 /* AgentToys.swift */; };
 		7B55105F3E341D9C5CAB2592 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 374CF3691D191E404F013DFD /* Assets.xcassets */; };
+		7D09551C007E5EFC41E9BC75 /* ChatTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE93F4E05EF0C8DEC474369F /* ChatTuning.swift */; };
 		7F925304C3F0A7CEFF22F377 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF80839A6E50CA04003286FB /* EngineTests.swift */; };
 		81701D536F25C2BF27280B02 /* TrainingLoopChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084CF4279C10144E244AC493 /* TrainingLoopChapter.swift */; };
 		9C8BA404FD58130891DEABEA /* PretrainingChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6AFEA8197C8B8B32653C62 /* PretrainingChapter.swift */; };
@@ -101,6 +102,7 @@
 		F77E78974F005D2DC421196A /* BigPictureChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigPictureChapter.swift; sourceTree = "<group>"; };
 		F874F32A30BE9A834B0146E1 /* WorkflowsChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkflowsChapter.swift; sourceTree = "<group>"; };
 		F9177656EE75D7D7F32BE2BE /* Optimizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optimizers.swift; sourceTree = "<group>"; };
+		FE93F4E05EF0C8DEC474369F /* ChatTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTuning.swift; sourceTree = "<group>"; };
 		FF80839A6E50CA04003286FB /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -164,6 +166,7 @@
 			children = (
 				5013B416D06FC58A30E370E9 /* AgentToys.swift */,
 				C22792B1F42D04866055098A /* Bandits.swift */,
+				FE93F4E05EF0C8DEC474369F /* ChatTuning.swift */,
 				081C46D7E14DAE68C9291500 /* Corpus.swift */,
 				979AE38F83A705FD77C7B87B /* Landscapes.swift */,
 				F9177656EE75D7D7F32BE2BE /* Optimizers.swift */,
@@ -346,6 +349,7 @@
 				048FA640283E11C102B77BAB /* BigPictureChapter.swift in Sources */,
 				178DA406AE19945A01C37723 /* BlockChapter.swift in Sources */,
 				C29E1B6E7E1EE50DACDB63F8 /* Chapter.swift in Sources */,
+				7D09551C007E5EFC41E9BC75 /* ChatTuning.swift in Sources */,
 				A5B366D3548821A4C2FA68EA /* Components.swift in Sources */,
 				09F02411D187947002C0785E /* Corpus.swift in Sources */,
 				A21658D15947BFD06F5F1F67 /* EmbeddingsChapter.swift in Sources */,

@@ -199,6 +199,25 @@ final class EngineTests: XCTestCase {
         XCTAssertTrue(t.isTrained)
     }
 
+    /// SFT on the real tiny model: a pretrained model doesn't answer questions; a short fine-tune
+    /// teaches the format, and it carries over to questions it never saw.
+    @MainActor
+    func testChatTuningTeachesAnswerFormat() {
+        let t = Trainer(saveURL: nil)
+        t.trainNow(steps: t.settings.totalSteps)
+        let tuner = ChatTuner(base: t.snapshot)
+        func count(_ check: (String, String) -> Bool) -> Int {
+            ChatTuning.heldOut.filter { check(ChatTuning.answer(tuner.model, question: $0, tokenizer: .shared), $0) }.count
+        }
+        XCTAssertEqual(count { ChatTuning.startsWithSubject($0, question: $1) }, 0, "A pretrained model shouldn't answer questions yet")
+        let before = tuner.demonstrationLoss()
+        for _ in 0..<ChatTuner.suggestedSteps { _ = tuner.trainStep() }
+        let after = tuner.demonstrationLoss()
+        print("SFT loss \(before) → \(after); subject \(count { ChatTuning.startsWithSubject($0, question: $1) })/4, verb \(count { ChatTuning.usesVerb($0, question: $1) })/4")
+        XCTAssertLessThan(after, before * 0.5)
+        XCTAssertGreaterThanOrEqual(count { ChatTuning.startsWithSubject($0, question: $1) }, 3)
+    }
+
     func testBanditExplorersBeatGreedyOnAverage() {
         func avgRegret(_ s: Bandit.Strategy) -> Double {
             (1...30).map { Bandit.run(s, steps: 600, seed: UInt64($0)).regret }.reduce(0, +) / 30
