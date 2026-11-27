@@ -272,6 +272,18 @@ final class EngineTests: XCTestCase {
         XCTAssertEqual(Benchmark.standardError(p: 0.6, n: 40), 0.0775, accuracy: 1e-4)
     }
 
+    /// The website's engine is a port of this one with the same random number generator, so the
+    /// same seeds must give the same corpus and the same first ten losses (shared fixture).
+    func testMatchesSharedFixture() throws {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/first-losses.json")
+        struct Fixture: Decodable { let vocab: Int; let corpusStart: String; let losses: [Double] }
+        let f = try JSONDecoder().decode(Fixture.self, from: Data(contentsOf: url))
+        XCTAssertEqual(CharTokenizer.shared.size, f.vocab)
+        XCTAssertEqual(String(Corpus.training.prefix(60)), f.corpusStart)
+        let w = TrainingWorker(config: GPTConfig(vocab: CharTokenizer.shared.size), settings: TrainSettings(), tokenizer: .shared)
+        for expected in f.losses { XCTAssertEqual(w.trainStep().loss, expected, accuracy: 1e-4) }
+    }
+
     func testBanditExplorersBeatGreedyOnAverage() {
         func avgRegret(_ s: Bandit.Strategy) -> Double {
             (1...30).map { Bandit.run(s, steps: 600, seed: UInt64($0)).regret }.reduce(0, +) / 30

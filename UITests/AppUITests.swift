@@ -31,16 +31,65 @@ final class AppUITests: XCTestCase {
         XCTAssertTrue(el.waitForExistence(timeout: timeout), "never saw text containing “\(s)”", file: file, line: line)
     }
 
+    /// Any element whose accessibility label contains `s` (headings and combined captions aren't static texts).
+    private func waitForLabel(_ s: String, timeout: TimeInterval = 20, file: StaticString = #filePath, line: UInt = #line) {
+        let el = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", s)).firstMatch
+        XCTAssertTrue(el.waitForExistence(timeout: timeout), "never saw a label containing “\(s)”", file: file, line: line)
+    }
+
     private func button(_ label: String) -> XCUIElement { app.buttons[label].firstMatch }
 
     func testEveryChapterOpens() {
         let titles = [
             "The Big Picture", "Text into Tokens", "Embeddings", "Attention", "The Transformer Block",
             "Predicting the Next Token", "Backpropagation", "The Optimizer", "The Training Loop",
-            "Pretraining at Scale", "Supervised Fine-Tuning", "Learning from Preferences", "The Full Pipeline",
+            "Pretraining at Scale", "Supervised Fine-Tuning", "Learning from Preferences", "Reasoning Models",
+            "Evals", "The Full Pipeline", "Inference",
             "From Model to Agent", "The Harness", "Tool Use, Step by Step", "Training Models to Be Agents", "Workflows & Bandits",
         ]
         for (i, t) in titles.enumerated() { open(i + 1, t) }
+    }
+
+    func testOpensOnTheTourAndScrolls() {
+        // A fresh install starts on the Tour.
+        waitForLabel("One sentence, all the way through")
+        let scroll = app.scrollViews.firstMatch
+        let stage = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", "Tour stage:")).firstMatch
+        XCTAssertTrue(stage.waitForExistence(timeout: 5))
+        XCTAssertTrue(stage.label.contains("It starts as text"))
+        for _ in 0..<6 { scroll.scroll(byDeltaX: 0, deltaY: -400) }
+        sleep(1)
+        XCTAssertFalse(stage.label.contains("It starts as text"), "scrolling should move the stage on (now: \(stage.label))")
+        app.menuBars.menuBarItems["Chapters"].click()
+        app.menuItems["Next Chapter"].click()
+        XCTAssertTrue(app.staticTexts["The Big Picture"].firstMatch.waitForExistence(timeout: 5))
+    }
+
+    func testGuessRevealsTheAnswer() {
+        open(4, "Attention")
+        button("No").click()
+        waitFor("causal mask hides")
+        button("Guess again").click()
+        XCTAssertTrue(button("Yes").waitForExistence(timeout: 5))
+    }
+
+    func testNewChapters() {
+        open(13, "Reasoning Models")
+        button("Train with GRPO").click()
+        sleep(3)
+        button("Pause").click()
+        waitFor("Latest group")
+        open(14, "Evals")
+        waitFor("Standard error")
+        open(16, "Inference")
+        waitFor("characters kept")
+        button("Sample again").click()
+        waitFor("Tokens per big pass")
+    }
+
+    func testSettingsWindow() {
+        app.typeKey(",", modifierFlags: .command)
+        XCTAssertTrue(app.staticTexts["Chapters read"].waitForExistence(timeout: 5))
     }
 
     func testTrainingLoopTrainsAndPauses() {
@@ -52,7 +101,7 @@ final class AppUITests: XCTestCase {
         waitFor("step 100", timeout: 10)            // a sample was generated at step 100
         // The other chapters now see a trained-ish model.
         open(3, "Embeddings")
-        waitFor("training steps")
+        waitForLabel("Validation loss")
         // Reset brings it back to zero.
         open(9, "The Training Loop")
         button("Reset").click()
@@ -101,21 +150,21 @@ final class AppUITests: XCTestCase {
     }
 
     func testAgentChapters() {
-        open(14, "From Model to Agent")
+        open(17, "From Model to Agent")
         for _ in 0..<15 { button("Next").click() }
         waitFor("signal to stop the loop")
-        open(15, "The Harness")
+        open(18, "The Harness")
         button("Sub-agents").click()
         waitFor("clean context")
         app.radioButtons["Ask before every tool"].click()
         waitFor("interruptions in a 4-call task")
-        open(16, "Tool Use, Step by Step")
+        open(19, "Tool Use, Step by Step")
         for _ in 0..<4 { button("Next").click() }
         waitFor("the model is called again")
         app.scrollViews.firstMatch.scroll(byDeltaX: 0, deltaY: -700)   // bring "When things go wrong" into view
         app.radioButtons["Parallel calls"].click()
         waitFor("saves a whole round trip")
-        open(17, "Training Models to Be Agents")
+        open(20, "Training Models to Be Agents")
         button("Run 150 updates").click()
         waitFor("Reward hacking", timeout: 30)
         app.descendants(matching: .any)["robustChecker"].firstMatch.click()
@@ -131,7 +180,7 @@ final class AppUITests: XCTestCase {
     }
 
     func testWorkflowsAndBandits() {
-        open(18, "Workflows & Bandits")
+        open(21, "Workflows & Bandits")
         app.radioButtons["Evaluator–optimizer"].click()
         waitFor("cap the rounds")
         button("Run 600 tries").click()

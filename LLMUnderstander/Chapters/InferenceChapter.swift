@@ -81,7 +81,9 @@ struct InferenceChapter: View {
     private var cacheCard: some View {
         let shape = bigModel ? InferenceMaths.Shape.gpt3 : InferenceMaths.Shape.tiny(app.trainer.config)
         let maxT = bigModel ? 4096.0 : Double(app.trainer.config.context)
-        let points = stride(from: 1.0, through: maxT, by: max(1, maxT / 64)).map { t in
+        // Always end exactly at maxT, so the last point matches the "Token maxT" tiles.
+        let positions = Array(stride(from: 1.0, to: maxT, by: max(1, maxT / 64))) + [maxT]
+        let points = positions.map { t in
             (t, InferenceMaths.withCache(shape, position: t), InferenceMaths.withoutCache(shape, position: t))
         }
         let last = points.last!

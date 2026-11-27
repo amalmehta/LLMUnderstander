@@ -1,0 +1,17 @@
+{
+  "note": "First ten training losses with the default seeds and settings. Both engines must reproduce them (to 4 decimals).",
+  "vocab": 27,
+  "corpusStart": "my sister wants a warm cake today. the fox holds a green lea",
+  "losses": [
+    3.301447,
+    3.301006,
+    3.306928,
+    3.287065,
+    3.285006,
+    3.298759,
+    3.273057,
+    3.269635,
+    3.259769,
+    3.260667
+  ]
+}

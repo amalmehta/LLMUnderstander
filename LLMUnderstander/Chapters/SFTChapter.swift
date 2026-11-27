@@ -178,7 +178,8 @@ private struct OwnModelTuning: View {
             }
         }
         .onAppear { if t.isTrained { session.prepare(base: t.snapshot, version: t.snapshotVersion) } }
-        .onChange(of: t.snapshotVersion) { if t.isTrained && !t.isRunning { session.prepare(base: t.snapshot, version: t.snapshotVersion) } }
+        // A newer model only replaces the session before fine-tuning starts; after that, Start over picks it up.
+        .onChange(of: t.snapshotVersion) { if t.isTrained && !t.isRunning && session.step == 0 && !session.isRunning { session.prepare(base: t.snapshot, version: t.snapshotVersion) } }
         .onChange(of: t.isTrained) { if t.isTrained { session.prepare(base: t.snapshot, version: t.snapshotVersion) } }
     }
 }
