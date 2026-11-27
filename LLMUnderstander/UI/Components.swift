@@ -385,7 +385,6 @@ struct ModelStatusBanner: View {
         }
         .padding(12)
         .background((t.isTrained ? Color.green : Color.orange).opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
-        .accessibilityElement(children: .combine)
     }
 
     /// Says what "trained" means in numbers: validation loss against random guessing.

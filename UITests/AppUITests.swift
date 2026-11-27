@@ -34,8 +34,18 @@ final class AppUITests: XCTestCase {
     /// Any element whose accessibility label contains `s` (headings and combined captions aren't static texts).
     private func waitForLabel(_ s: String, timeout: TimeInterval = 20, file: StaticString = #filePath, line: UInt = #line) {
         // On macOS a static text's words are its value; a combined element's are its label.
-        let el = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@ OR value CONTAINS %@", s, s)).firstMatch
-        XCTAssertTrue(el.waitForExistence(timeout: timeout), "never saw a label containing “\(s)”", file: file, line: line)
+        // Typed queries stay fast; walking every element (descendants .any) can time out on big pages.
+        let candidates = [
+            app.staticTexts.matching(NSPredicate(format: "value CONTAINS %@", s)).firstMatch,
+            app.otherElements.matching(NSPredicate(format: "label CONTAINS %@", s)).firstMatch,
+            app.groups.matching(NSPredicate(format: "label CONTAINS %@", s)).firstMatch,
+        ]
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if candidates.contains(where: { $0.exists }) { return }
+            sleep(1)
+        }
+        XCTFail("never saw a label containing “\(s)”", file: file, line: line)
     }
 
     private func button(_ label: String) -> XCUIElement { app.buttons[label].firstMatch }
@@ -102,7 +112,7 @@ final class AppUITests: XCTestCase {
         waitFor("step 100", timeout: 10)            // a sample was generated at step 100
         // The other chapters now see a trained-ish model.
         open(3, "Embeddings")
-        waitForLabel("Validation loss")
+        waitFor("Validation loss")
         // Reset brings it back to zero.
         open(9, "The Training Loop")
         button("Reset").click()
