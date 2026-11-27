@@ -9,6 +9,8 @@ enum Snapshotter {
         let args = CommandLine.arguments
         guard let i = args.firstIndex(of: "--snapshots"), i + 1 < args.count else { return }
         let dir = URL(fileURLWithPath: args[i + 1])
+        // README screenshots are light mode whatever the Mac is set to; `--dark` for dark ones.
+        NSApp.appearance = NSAppearance(named: args.contains("--dark") ? .darkAqua : .aqua)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         try? await Task.sleep(for: .seconds(1))
         // `--tall` makes the window taller than the screen so whole chapters fit (for reviewing).
