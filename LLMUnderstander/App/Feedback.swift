@@ -15,6 +15,7 @@ struct FeedbackTab: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
+        .background(.bar)
     }
 }
 
@@ -53,7 +54,7 @@ struct FeedbackSheet: View {
     }
 
     private func open() {
-        let chapter = app.selected.map { "Chapter \($0.number): \($0.title)" } ?? "General"
+        let chapter = app.selected.map { $0.isTour ? "Tour" : "Chapter \($0.number): \($0.title)" } ?? "General"
         let title = "\(kind): \(chapter)"
         let body = "\(text)\n\n---\nChapter: \(chapter)\nApp version: \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?")"
         var c = URLComponents(string: "\(Self.repo)/issues/new")!

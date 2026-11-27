@@ -18,7 +18,7 @@ struct AgentTrainingChapter: View {
                 .init(title: "RL in environments", detail: "attempt real tasks,\nreward = did it work?", color: .green),
             ])
 
-            Card(title: "SFT on agent transcripts: what gets trained?", subtitle: "Chapter 14's run as a training example. Same loss mask idea as Chapter 11.") {
+            Card(title: "SFT on agent transcripts: what gets trained?", subtitle: "Chapter \(Chapter.agentLoop.number)'s run as a training example. Same loss mask idea as Chapter 11.") {
                 Toggle("Show the loss mask", isOn: $showMask).toggleStyle(.switch)
                 ScrollView {
                     VStack(spacing: 6) {

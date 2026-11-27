@@ -79,8 +79,8 @@ struct AgentLoopChapter: View {
 
             GoDeeper(title: "what changes compared with a chatbot") {
                 Prose("**Many model calls per request.** This small task took \(AgentScript.modelCalls) separate calls to the model. Each call re-reads the entire context (prompt caching makes that cheaper), so agents use far more tokens than chat.")
-                Prose("**The context is the agent's only working memory.** Everything the model knows about the task — the error message, the file, its own earlier plan — must be in the context window. Chapter 15 is about managing that.")
-                Prose("**Errors compound.** If each step is right 95% of the time, a 20-step task succeeds only about 36% of the time (0.95²⁰). That's why checking work, like re-running the tests here, matters so much, and why agents are trained specifically for long tasks (Chapter 17).")
+                Prose("**The context is the agent's only working memory.** Everything the model knows about the task — the error message, the file, its own earlier plan — must be in the context window. Chapter \(Chapter.harness.number) is about managing that.")
+                Prose("**Errors compound.** If each step is right 95% of the time, a 20-step task succeeds only about 36% of the time (0.95²⁰). That's why checking work, like re-running the tests here, matters so much, and why agents are trained specifically for long tasks (Chapter \(Chapter.agentTraining.number)).")
             }
         }
     }

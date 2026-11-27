@@ -170,7 +170,7 @@ struct HarnessChapter: View {
 
     private var permissionCard: some View {
         let calls = AgentScript.events.filter { $0.kind == .toolCall }
-        return Card(title: "Permissions: who gets asked?", subtitle: "The tool calls from Chapter 14's run, under three policies") {
+        return Card(title: "Permissions: who gets asked?", subtitle: "The tool calls from Chapter \(Chapter.agentLoop.number)'s run, under three policies") {
             Picker("", selection: $policy) { ForEach(Policy.allCases) { Text($0.rawValue).tag($0) } }
                 .pickerStyle(.segmented).labelsHidden()
             VStack(spacing: 6) {

@@ -399,6 +399,7 @@ Review round (asked and answered 2026-11-26): the user ran the "0, 5, 15" shortc
 - Mac app first, then the same changes on the website in the same round.
 - One optional guess per chapter: pick what you expect before a live demo, running it reveals the answer and why.
 - A pull request per batch (CI and docs, Mac improvements, new chapters, website), then a notarized 1.1 release.
+- Added mid-round: a Tour, a scroll-driven animation above Chapter 1 that follows one sentence through the whole chain, with each piece popping in and out as you scroll and a link to its chapter. Offered on first launch, on the Mac and the website.
 Also done because the meta-instructions mark them always in scope and they were missing: docs/SYSTEM-DESIGN.md, docs/PROMPTS.md, a Settings window (⌘,) and an opening animation.
 
 DEFINITIONS AND DEFERRED:
@@ -412,6 +413,7 @@ Done criteria for the 2026-11-26 round:
 - "Progress remembered": a chapter counts as read once it has been open for 20 seconds or scrolled to its end; the sidebar shows a tick, and the app reopens on the last chapter. Stored on this Mac only (UserDefaults; local storage on the web), with a Reset button in Settings.
 - "VoiceOver": every chart, heatmap and landscape has a label and a value summary that reads out the numbers it shows.
 - "Same run on both platforms": the Mac app and the website use the same seeded random number generator (SplitMix64) and corpus, and a shared fixture checks that both produce the same first ten training losses to 4 decimal places.
+- "Tour": one pinned stage and about 14 scroll steps, from text to tokens, embeddings, attention, the block, next-token prediction, loss, gradients, the update, pretraining, SFT, preferences, reasoning, and the agent loop. The numbers on screen come from the reader's own tiny model where it has them. Scrolling back reverses every step; Reduce Motion swaps the movement for fades.
 - "Smooth": no interaction blocks the main thread for more than 100 ms; website training runs in a Web Worker.
 
 Deferred: distillation, mixture of experts and quantization chapters; a real KV cache inside the tiny model (the chapter counts work instead of timing it); LLM-as-judge demos; automatic update checks in the Mac app; localisation.

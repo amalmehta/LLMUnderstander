@@ -43,7 +43,7 @@ struct WorkflowsChapter: View {
             case .parallel: "**Use when** sub-tasks are independent (sectioning), or when you want more reliability by asking several times and taking a vote. See the calculator below. **Cost:** N× the tokens."
             case .orchestrator: "**Use when** you can't know the sub-tasks in advance (\"change every file that uses this API\"). The plan is decided by the model at run time. **Cost:** more tokens and more coordination to get right."
             case .evaluator: "**Use when** there are clear criteria and feedback measurably helps, like code that must pass tests or a translation that must keep its meaning. **Cost:** loops can run long; cap the rounds."
-            case .agent: "**Use when** the path really can't be predicted and you trust the model to steer (Chapters 14–17). The most flexible pattern and the hardest to make reliable. Start with the simplest pattern that works."
+            case .agent: "**Use when** the path really can't be predicted and you trust the model to steer (Chapters \(Chapter.agentLoop.number)–\(Chapter.agentTraining.number)). The most flexible pattern and the hardest to make reliable. Start with the simplest pattern that works."
             }
         }
     }
@@ -81,7 +81,7 @@ struct WorkflowsChapter: View {
 
             GoDeeper(title: "where bandits show up in LLM systems") {
                 Prose("**Choosing prompts, models or tools online:** each user request is a pull; success (a thumbs-up, a passing test) is the reward. A bandit shifts traffic toward what works while still checking the alternatives, which is smarter than a fixed 50/50 A/B test.")
-                Prose("**Exploration in RL training:** in Chapter 17 the policy only discovered the test-deleting shortcut because it sometimes tried it. Sampling at a temperature is how language models explore. Too little and RL never finds better strategies; too much and training is noisy.")
+                Prose("**Exploration in RL training:** in Chapter \(Chapter.agentTraining.number) the policy only discovered the test-deleting shortcut because it sometimes tried it. Sampling at a temperature is how language models explore. Too little and RL never finds better strategies; too much and training is noisy.")
                 Prose("**Search at inference time:** tree search over reasoning steps or code edits must decide which branch to expand next. Monte Carlo tree search does this with the UCB rule from this page.")
                 Formula("UCB1:      pick argmax_i [ mean_i + √(2 ln t / n_i) ]\nThompson:  draw θ_i ~ Beta(wins_i + 1, losses_i + 1), pick argmax_i θ_i\nRegret:    Σ_t ( best rate − rate of the arm chosen at t )")
             }

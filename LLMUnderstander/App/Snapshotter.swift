@@ -27,7 +27,7 @@ enum Snapshotter {
         for c in Chapter.allCases {
             app.selected = c
             try? await Task.sleep(for: .seconds(2.5))
-            save(to: dir.appendingPathComponent(String(format: "%02d %@.png", c.number, c.title)))
+            save(to: dir.appendingPathComponent(c.isTour ? "00 Tour.png" : String(format: "%02d %@.png", c.number, c.title)))
         }
         NSApp.terminate(nil)
     }

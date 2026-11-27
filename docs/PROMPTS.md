@@ -16,3 +16,5 @@ Each session's prompts, word for word and in order, with a line on what each led
    The N,N,N shortcut: listed 5 things to add and 15 to improve, ranked by impact.
 6. "Just improvements 1–5", then "do all"
    Building all 20. Answers to the follow-up questions: three new chapters (Reasoning Models, Evals, Inference), Mac first then the website, one guess per chapter, a pull request per batch then release 1.1.
+7. "there should be an interactive mode where theres a scrollable animation in which things pop in and out and make it easy to visualize how everything in the chain works"
+   Showed three concepts; chosen: a Tour above Chapter 1 that follows one sentence through the whole chain, on the Mac and the website.

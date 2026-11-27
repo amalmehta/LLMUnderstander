@@ -7,11 +7,15 @@ struct ChapterPage<Content: View>: View {
     let chapter: Chapter
     @ViewBuilder var content: Content
     @Environment(AppState.self) private var app
+    @State private var viewport: CGFloat = 0
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
                 header
+                if let g = chapter.guess {
+                    GuessCard(chapter: chapter, question: g.question, options: g.options, answer: g.answer, why: g.why)
+                }
                 content
                 footer
             }
@@ -20,12 +24,19 @@ struct ChapterPage<Content: View>: View {
             .frame(maxWidth: 1000, alignment: .leading)
             .frame(maxWidth: .infinity)
         }
+        .coordinateSpace(name: ChapterPageSpace.name)
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewport = $0 }
         .navigationTitle(chapter.title)
+        // Counts as read after 20 seconds on the page (or on reaching the end, below).
+        .task(id: chapter) {
+            try? await Task.sleep(for: .seconds(20))
+            if !Task.isCancelled { app.markRead(chapter) }
+        }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("CHAPTER \(chapter.number) · \(chapter.section.rawValue.uppercased())")
+            Text(chapter.isTour ? "TOUR" : "CHAPTER \(chapter.number) · \(chapter.section.rawValue.uppercased())")
                 .font(.caption.weight(.semibold))
                 .tracking(1.2)
                 .foregroundStyle(chapter.section.color)
@@ -41,6 +52,7 @@ struct ChapterPage<Content: View>: View {
         HStack {
             if let p = chapter.previous {
                 Button { app.selected = p } label: { Label(p.title, systemImage: "chevron.left") }
+                    .help("Previous chapter (⌘[)")
             }
             Spacer()
             if let n = chapter.next {
@@ -49,11 +61,18 @@ struct ChapterPage<Content: View>: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(n.section.color)
+                .help("Next chapter (⌘])")
             }
         }
         .padding(.top, 10)
+        // Reaching the end counts as reading it (a plain onAppear would fire as soon as the page loads).
+        .onGeometryChange(for: CGFloat.self) { $0.frame(in: .named(ChapterPageSpace.name)).minY } action: { y in
+            if viewport > 0 && y < viewport { app.markRead(chapter) }
+        }
     }
 }
+
+enum ChapterPageSpace { static let name = "chapter page" }
 
 // MARK: - Text blocks
 
@@ -419,5 +438,73 @@ extension View {
                 action()
             }
         }
+    }
+}
+
+// MARK: - Guess before you look
+
+/// One question per chapter: commit to a prediction before seeing the live demo.
+/// Picking reveals whether it was right and why; the pick is remembered.
+struct GuessCard: View {
+    let chapter: Chapter
+    let question: String
+    let options: [String]
+    let answer: Int
+    let why: LocalizedStringKey
+    @Environment(AppState.self) private var app
+
+    var body: some View {
+        let picked = app.guesses[chapter.key]
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "questionmark.bubble").foregroundStyle(chapter.section.color)
+                Text("Guess first").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                Spacer()
+                if picked != nil {
+                    Button("Guess again") { withAnimation(.easeOut(duration: 0.2)) { app.clearGuess(for: chapter) } }
+                        .buttonStyle(.link).font(.caption)
+                }
+            }
+            Text(question).font(.system(size: 15, weight: .medium)).fixedSize(horizontal: false, vertical: true)
+            FlowLayout(spacing: 8) {
+                ForEach(options.indices, id: \.self) { i in
+                    Button {
+                        withAnimation(.easeOut(duration: 0.2)) { app.recordGuess(i, for: chapter) }
+                    } label: {
+                        HStack(spacing: 6) {
+                            if let picked, i == answer { Image(systemName: "checkmark.circle.fill").foregroundStyle(.green) }
+                            else if picked == i { Image(systemName: "xmark.circle").foregroundStyle(.secondary) }
+                            Text(options[i])
+                        }
+                        .padding(.horizontal, 10).padding(.vertical, 6)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(fill(i, picked)))
+                        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.primary.opacity(0.12)))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(picked != nil)
+                    .accessibilityValue(picked == nil ? "" : (i == answer ? "correct answer" : (i == picked ? "your guess" : "")))
+                }
+            }
+            if let picked {
+                HStack(alignment: .top, spacing: 8) {
+                    Text(picked == answer ? "Right." : "Not quite.").font(.callout.weight(.semibold))
+                    Text(why).font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            } else {
+                Text("Pick one, then try the demo below to see for yourself.").font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(chapter.section.color.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Guess first")
+    }
+
+    private func fill(_ i: Int, _ picked: Int?) -> Color {
+        guard let picked else { return Color(nsColor: .controlBackgroundColor) }
+        if i == answer { return Color.green.opacity(0.15) }
+        return i == picked ? Color.secondary.opacity(0.12) : Color(nsColor: .controlBackgroundColor)
     }
 }
