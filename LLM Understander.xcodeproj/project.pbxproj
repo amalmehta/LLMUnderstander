@@ -14,6 +14,7 @@
 		178DA406AE19945A01C37723 /* BlockChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6DC3AEF892C8A8315BCE255 /* BlockChapter.swift */; };
 		1C9CA2F9E60F0911E8207046 /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C2BD44914F166BC31363 /* Tokenizer.swift */; };
 		1F1E5DD7710722EE2DADE17B /* WorkflowsChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F874F32A30BE9A834B0146E1 /* WorkflowsChapter.swift */; };
+		263E0F021A11D7E8012C36A7 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0618CE3937753F277EA05D /* Benchmark.swift */; };
 		288BB6C9C4BD830A03CAD08B /* AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726C1E79CA708A81BAEAEBE5 /* AppUITests.swift */; };
 		31525A03488878A55A2A2389 /* PipelineChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F85F2A855E644EA2F12987 /* PipelineChapter.swift */; };
 		3491FE538C5300ED6E63D8CE /* Bandits.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22792B1F42D04866055098A /* Bandits.swift */; };
@@ -21,6 +22,7 @@
 		36AA79DCBB8CD3DA75202FD5 /* SFTChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2557641077711A02238F7364 /* SFTChapter.swift */; };
 		4F5AC16825498585BE1259BC /* PreferenceToys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11618FB14A2BA3903746D897 /* PreferenceToys.swift */; };
 		505FB772126D21D672EE35E8 /* Optimizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9177656EE75D7D7F32BE2BE /* Optimizers.swift */; };
+		5B40DEB565E83F9BBE538ADE /* Reasoning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298DABDB57A6C3212D9104D2 /* Reasoning.swift */; };
 		5FE5BC977E545B6645FC1A45 /* PreferencesChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398DC3207AF35BDE0833C3C6 /* PreferencesChapter.swift */; };
 		6B61911C2D2D613CD76056EC /* EvalsChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906320C95F4818A333854987 /* EvalsChapter.swift */; };
 		6DD9023BF89F787A818A8BA7 /* ReasoningChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3944A2D649DE04DB42CA8D /* ReasoningChapter.swift */; };
@@ -46,6 +48,7 @@
 		D9431C6F985BFBC38A50A168 /* LLMUnderstanderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B1C961658A6DD8C7F708B /* LLMUnderstanderApp.swift */; };
 		DF4976F884E6276EFB8C56E9 /* TinyGPT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483E8285C77B866467DC5A4 /* TinyGPT.swift */; };
 		E26D1345049F3D8840C26846 /* AgentLoopChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697A38CB29EE438A9414F016 /* AgentLoopChapter.swift */; };
+		E29E4176AC739AB13F7C9612 /* InferenceMaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20A8E2BE024E5993623FC6E /* InferenceMaths.swift */; };
 		E469026B5FC0D16D3FD0130D /* Landscapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979AE38F83A705FD77C7B87B /* Landscapes.swift */; };
 		E5F77EDB335BAA4AEC54076B /* AttentionChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8CBCA61CC2453160AD8A5F /* AttentionChapter.swift */; };
 		EE446E0FF2042279BCD21FEA /* ToolUseChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D6B0FB30246525FDB763F78 /* ToolUseChapter.swift */; };
@@ -79,6 +82,7 @@
 		11618FB14A2BA3903746D897 /* PreferenceToys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceToys.swift; sourceTree = "<group>"; };
 		138F2D94FF3C65AD29EAFEB9 /* TourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourView.swift; sourceTree = "<group>"; };
 		2557641077711A02238F7364 /* SFTChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFTChapter.swift; sourceTree = "<group>"; };
+		298DABDB57A6C3212D9104D2 /* Reasoning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reasoning.swift; sourceTree = "<group>"; };
 		2B89AC52FE84460ACCC343F6 /* App UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "App UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C72557283DF613CA9FA7888 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		374CF3691D191E404F013DFD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -106,6 +110,7 @@
 		AEE362BD8DD334A5C16BF99A /* TokensChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensChapter.swift; sourceTree = "<group>"; };
 		B4CF817AE3B2ADC59FFDE5B7 /* BackpropChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackpropChapter.swift; sourceTree = "<group>"; };
 		B6DC3AEF892C8A8315BCE255 /* BlockChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockChapter.swift; sourceTree = "<group>"; };
+		C20A8E2BE024E5993623FC6E /* InferenceMaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InferenceMaths.swift; sourceTree = "<group>"; };
 		C22792B1F42D04866055098A /* Bandits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bandits.swift; sourceTree = "<group>"; };
 		C640C2BD44914F166BC31363 /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
 		D5D2B130E5CC9C0553713F30 /* Snapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snapshotter.swift; sourceTree = "<group>"; };
@@ -115,6 +120,7 @@
 		F874F32A30BE9A834B0146E1 /* WorkflowsChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkflowsChapter.swift; sourceTree = "<group>"; };
 		F9177656EE75D7D7F32BE2BE /* Optimizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optimizers.swift; sourceTree = "<group>"; };
 		FE93F4E05EF0C8DEC474369F /* ChatTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTuning.swift; sourceTree = "<group>"; };
+		FF0618CE3937753F277EA05D /* Benchmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
 		FF80839A6E50CA04003286FB /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -183,11 +189,14 @@
 			children = (
 				5013B416D06FC58A30E370E9 /* AgentToys.swift */,
 				C22792B1F42D04866055098A /* Bandits.swift */,
+				FF0618CE3937753F277EA05D /* Benchmark.swift */,
 				FE93F4E05EF0C8DEC474369F /* ChatTuning.swift */,
 				081C46D7E14DAE68C9291500 /* Corpus.swift */,
+				C20A8E2BE024E5993623FC6E /* InferenceMaths.swift */,
 				979AE38F83A705FD77C7B87B /* Landscapes.swift */,
 				F9177656EE75D7D7F32BE2BE /* Optimizers.swift */,
 				11618FB14A2BA3903746D897 /* PreferenceToys.swift */,
+				298DABDB57A6C3212D9104D2 /* Reasoning.swift */,
 				E1887322D1E4085A65DD4A1F /* Tensor.swift */,
 				8483E8285C77B866467DC5A4 /* TinyGPT.swift */,
 				C640C2BD44914F166BC31363 /* Tokenizer.swift */,
@@ -372,6 +381,7 @@
 				E5F77EDB335BAA4AEC54076B /* AttentionChapter.swift in Sources */,
 				B925208E6733A41F72F18051 /* BackpropChapter.swift in Sources */,
 				3491FE538C5300ED6E63D8CE /* Bandits.swift in Sources */,
+				263E0F021A11D7E8012C36A7 /* Benchmark.swift in Sources */,
 				048FA640283E11C102B77BAB /* BigPictureChapter.swift in Sources */,
 				178DA406AE19945A01C37723 /* BlockChapter.swift in Sources */,
 				C29E1B6E7E1EE50DACDB63F8 /* Chapter.swift in Sources */,
@@ -384,6 +394,7 @@
 				F966704236CE0AF966C1F719 /* Guesses.swift in Sources */,
 				B7D22FC1093A7F4CF84A67ED /* HarnessChapter.swift in Sources */,
 				C23F0CA4A000A92A78E36930 /* InferenceChapter.swift in Sources */,
+				E29E4176AC739AB13F7C9612 /* InferenceMaths.swift in Sources */,
 				D9431C6F985BFBC38A50A168 /* LLMUnderstanderApp.swift in Sources */,
 				E469026B5FC0D16D3FD0130D /* Landscapes.swift in Sources */,
 				ABCDDF630F8E7A4FCCFA39D5 /* NextTokenChapter.swift in Sources */,
@@ -393,6 +404,7 @@
 				4F5AC16825498585BE1259BC /* PreferenceToys.swift in Sources */,
 				5FE5BC977E545B6645FC1A45 /* PreferencesChapter.swift in Sources */,
 				9C8BA404FD58130891DEABEA /* PretrainingChapter.swift in Sources */,
+				5B40DEB565E83F9BBE538ADE /* Reasoning.swift in Sources */,
 				6DD9023BF89F787A818A8BA7 /* ReasoningChapter.swift in Sources */,
 				36AA79DCBB8CD3DA75202FD5 /* SFTChapter.swift in Sources */,
 				D112852477548079354B60EE /* SettingsView.swift in Sources */,

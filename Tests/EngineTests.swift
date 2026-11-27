@@ -218,6 +218,60 @@ final class EngineTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(count { ChatTuning.startsWithSubject($0, question: $1) }, 3)
     }
 
+    /// GRPO on the reasoning toy: accuracy rises by 25+ points and the model learns to think longer,
+    /// and groups where every answer scores the same change nothing.
+    func testGRPOLearnsToThinkLonger() {
+        var toy = ReasoningToy(), rng = SplitMix64(seed: 42)
+        let acc0 = toy.expectedAccuracy, len0 = toy.expectedLength
+        var silent = 0
+        for _ in 0..<150 { if toy.step(&rng).silent { silent += 1 } }
+        print("GRPO accuracy \(acc0) → \(toy.expectedAccuracy), length \(len0) → \(toy.expectedLength), silent groups \(silent)/150")
+        XCTAssertGreaterThan(toy.expectedAccuracy - acc0, 0.25)
+        XCTAssertGreaterThan(toy.expectedLength, len0 + 1)
+
+        var frozen = ReasoningToy(); frozen.groupSize = 8
+        let before = frozen.logits
+        // A group with identical rewards has zero advantage everywhere, so the logits can't move.
+        frozen.lengthCost = 0
+        var r2 = SplitMix64(seed: 1)
+        for _ in 0..<200 {
+            let saved = frozen.logits
+            let g = frozen.step(&r2)
+            if g.silent { XCTAssertEqual(frozen.logits, saved) }
+        }
+        XCTAssertNotEqual(frozen.logits, before)
+    }
+
+    /// The Evals chapter's point: on the same answers, per-character accuracy rises steadily
+    /// while exact match lags and then catches up.
+    @MainActor
+    func testBenchmarkScoresDuringTraining() {
+        XCTAssertEqual(Benchmark.items.count, 40)
+        XCTAssertEqual(Set(Benchmark.items.map(\.prompt)).count, 40)
+        let t = Trainer(saveURL: nil)
+        let start = Date()
+        _ = Benchmark.score(t.snapshot)
+        print("benchmark scoring took \(Date().timeIntervalSince(start))s")
+        t.trainNow(steps: t.settings.totalSteps)
+        let rows = zip(t.benchmark, t.benchmarkPerChar).map { "\(Int($0.x)): exact \(String(format: "%.2f", $0.y)) perChar \(String(format: "%.2f", $1.y))" }
+        print("benchmark curve:\n" + rows.joined(separator: "\n"))
+        XCTAssertGreaterThanOrEqual(t.benchmark.count, t.settings.totalSteps / 100)   // step 0 arrives asynchronously
+        XCTAssertGreaterThan(t.benchmark.last!.y, 0.5)
+        for (e, c) in zip(t.benchmark, t.benchmarkPerChar) { XCTAssertGreaterThanOrEqual(c.y + 1e-9, e.y * 0.5) }
+    }
+
+    func testInferenceMaths() {
+        let tiny = InferenceMaths.Shape.tiny(GPTConfig(vocab: 27))
+        // For the first token there's nothing to reuse, so the two counts agree.
+        XCTAssertEqual(InferenceMaths.withCache(tiny, position: 1), InferenceMaths.withoutCache(tiny, position: 1))
+        XCTAssertGreaterThan(InferenceMaths.withoutCache(tiny, position: 32), 10 * InferenceMaths.withCache(tiny, position: 32))
+        XCTAssertEqual(InferenceMaths.tokensPerPass(acceptance: 0.7, draft: 4), (1 - pow(0.7, 5)) / 0.3, accuracy: 1e-12)
+        XCTAssertEqual(InferenceMaths.tokensPerPass(acceptance: 0.999, draft: 4), 5)
+        XCTAssertEqual(InferenceMaths.nucleus([0.5, 0.3, 0.2], p: 0.7), [0, 1])
+        XCTAssertEqual(InferenceMaths.nucleus([0.5, 0.3, 0.2], p: 0.1), [0])
+        XCTAssertEqual(Benchmark.standardError(p: 0.6, n: 40), 0.0775, accuracy: 1e-4)
+    }
+
     func testBanditExplorersBeatGreedyOnAverage() {
         func avgRegret(_ s: Bandit.Strategy) -> Double {
             (1...30).map { Bandit.run(s, steps: 600, seed: UInt64($0)).regret }.reduce(0, +) / 30

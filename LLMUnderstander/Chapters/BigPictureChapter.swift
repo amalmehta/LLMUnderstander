@@ -43,7 +43,7 @@ struct BigPictureChapter: View {
                 }
             }
 
-            KeyIdea("Learn the loop once and you understand every stage. Chapters 2–5 build the model, 6–9 show how it learns, 10–12 show how that loop is used at scale and then reshaped into an assistant.")
+            KeyIdea("Learn the loop once and you understand every stage. Chapters 2–5 build the model, 6–9 show how it learns, 10–13 show how that loop is used at scale and then reshaped into an assistant that reasons, 14–16 how it's measured and used, and 17–21 how it becomes an agent. New here? The Tour, at the top of the sidebar, runs through it all in a few minutes.")
 
             GoDeeper(title: "what \"a probability for every next token\" means") {
                 Formula("p(text) = p(x₁) · p(x₂ | x₁) · p(x₃ | x₁, x₂) · … · p(xₙ | x₁ … xₙ₋₁)")

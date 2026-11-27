@@ -141,6 +141,9 @@ final class Trainer {
     private(set) var learningRates: [Point] = []
     private(set) var gradNorms: [Point] = []
     private(set) var samples: [GeneratedSample] = []
+    /// The 40-item benchmark (Evals chapter), scored every 100 steps: x = step.
+    private(set) var benchmark: [Point] = []
+    private(set) var benchmarkPerChar: [Point] = []
     private(set) var isRunning = false
     private(set) var phase: LoopPhase?
     var slowMotion = false {
@@ -185,6 +188,8 @@ final class Trainer {
         var optimizer: Optimizer.State?
         /// Where the batch sampler was, so a resumed run sees the same batches as an unbroken one.
         var batchRNG: UInt64?
+        var benchmark: [Point]?
+        var benchmarkPerChar: [Point]?
     }
 
     /// Save the model and the optimizer's state after training stops, so resuming continues the same run.
@@ -193,7 +198,8 @@ final class Trainer {
         let params = worker.model.parameters
         let saved = Saved(config: config, settings: settings, step: step, weights: params.map(\.data),
                           trainLoss: trainLoss, valLoss: valLoss, learningRates: learningRates, gradNorms: gradNorms, samples: samples,
-                          optimizer: worker.optimizer.state(for: params), batchRNG: worker.rng.state)
+                          optimizer: worker.optimizer.state(for: params), batchRNG: worker.rng.state,
+                          benchmark: benchmark, benchmarkPerChar: benchmarkPerChar)
         do {
             try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
             try JSONEncoder().encode(saved).write(to: url, options: .atomic)
@@ -220,6 +226,8 @@ final class Trainer {
         trainLoss = saved.trainLoss; valLoss = saved.valLoss
         learningRates = saved.learningRates; gradNorms = saved.gradNorms
         samples = saved.samples
+        benchmark = saved.benchmark ?? []
+        benchmarkPerChar = saved.benchmarkPerChar ?? []
         snapshot = worker.model.copy()
         return true
     }
@@ -241,6 +249,15 @@ final class Trainer {
         let v = w.validationLoss()
         valLoss = [Point(x: 0, y: v)]
         samples = [GeneratedSample(step: 0, text: w.sample())]
+        // Scoring takes ~0.2 s, so it runs on the training queue rather than holding up launch.
+        queue.async { [weak self] in
+            let b = Benchmark.score(w.model)
+            DispatchQueue.main.async {
+                guard let self, self.worker === w, self.benchmark.first?.x != 0 else { return }
+                self.benchmark.insert(Point(x: 0, y: b.exact), at: 0)
+                self.benchmarkPerChar.insert(Point(x: 0, y: b.perCharacter), at: 0)
+            }
+        }
     }
 
     func reset() {
@@ -252,6 +269,7 @@ final class Trainer {
         if let url = saveURL { try? FileManager.default.removeItem(at: url) }
         step = 0
         trainLoss = []; valLoss = []; learningRates = []; gradNorms = []; samples = []
+        benchmark = []; benchmarkPerChar = []
         phase = nil
         snapshot = worker.model.copy()
         snapshotVersion += 1
@@ -288,9 +306,10 @@ final class Trainer {
                     let val = deep ? w.validationLoss() : nil
                     let sample = deep ? w.sample() : nil
                     let snap = deep ? w.model.copy() : nil
+                    let bench = deep ? Benchmark.score(w.model) : nil
                     DispatchQueue.main.async {
                         guard let self, self.worker === w else { return }   // ignore a run that was reset
-                        self.receive(step: s, results: batch, val: val, sample: sample, snapshot: snap)
+                        self.receive(step: s, results: batch, val: val, sample: sample, snapshot: snap, bench: bench)
                     }
                 }
             }
@@ -321,11 +340,20 @@ final class Trainer {
                 for _ in 0..<chunk { results.append((w.step + 1, w.trainStep())) }
             }
             left -= chunk
-            receive(step: w.step, results: results, val: w.validationLoss(), sample: w.sample(), snapshot: w.model.copy())
+            receive(step: w.step, results: results, val: w.validationLoss(), sample: w.sample(), snapshot: w.model.copy(),
+                    bench: Benchmark.score(w.model))
         }
     }
 
-    private func receive(step s: Int, results: [(Int, TrainingWorker.StepResult)], val: Double?, sample: String?, snapshot snap: TinyGPT?) {
+    private func recordBenchmark(step s: Int, _ b: Benchmark.Score) {
+        guard benchmark.last.map({ Double(s) > $0.x }) ?? true else { return }
+        benchmark.append(Point(x: Double(s), y: b.exact))
+        benchmarkPerChar.append(Point(x: Double(s), y: b.perCharacter))
+    }
+
+    private func receive(step s: Int, results: [(Int, TrainingWorker.StepResult)], val: Double?, sample: String?, snapshot snap: TinyGPT?,
+                         bench: Benchmark.Score? = nil) {
+        if let bench { recordBenchmark(step: s, bench) }
         step = max(step, s)
         let last = trainLoss.last?.x ?? 0
         for (i, r) in results where Double(i) > last {

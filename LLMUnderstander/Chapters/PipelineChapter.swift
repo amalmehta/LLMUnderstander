@@ -40,13 +40,13 @@ struct PipelineChapter: View {
               objective: "Produce answers people (or tests) prefer, without drifting far from SFT",
               loss: "RLHF: −(reward − β·KL)    DPO: −log σ(β·Δ log-ratio)",
               learns: "Helpfulness, honesty, harmlessness, style; with verifiable rewards, better reasoning",
-              scale: "Small to growing: days to weeks", chapters: [.preferences]),
+              scale: "Small to growing: days to weeks", chapters: [.preferences, .reasoning, .evals]),
         Stage(name: "4 · Assistant", color: .purple,
               data: "Your prompt",
               objective: "— (inference: no learning)",
               loss: "next = sample(softmax(model(tokens) / temperature))",
               learns: "Nothing. The weights are frozen; it predicts one token at a time",
-              scale: "Every message you send", chapters: [.nextToken]),
+              scale: "Every message you send", chapters: [.nextToken, .inference]),
     ]
 
     var body: some View {
