@@ -221,12 +221,31 @@ export class TinyGPT {
 export type OptimizerKind = 'SGD' | 'Momentum' | 'AdamW'
 export const optimizerKinds: OptimizerKind[] = ['SGD', 'Momentum', 'AdamW']
 
+export interface OptimizerState { t: number; m: (number[] | null)[]; v: (number[] | null)[] }
+
 export class Optimizer {
   beta1 = 0.9; beta2 = 0.95; eps = 1e-8; weightDecay = 0.01
   private m = new Map<Tensor, Float64Array>()
   private v = new Map<Tensor, Float64Array>()
   t = 0
   constructor(public kind: OptimizerKind) {}
+
+  /** Moments in parameter order, so a saved run resumes exactly (matches Optimizer.State in Swift). */
+  state(params: Tensor[]): OptimizerState {
+    return { t: this.t, m: params.map((p) => { const a = this.m.get(p); return a ? Array.from(a) : null }), v: params.map((p) => { const a = this.v.get(p); return a ? Array.from(a) : null }) }
+  }
+
+  restore(s: OptimizerState, params: Tensor[]): boolean {
+    if (s.m.length !== params.length || s.v.length !== params.length) return false
+    if (!params.every((p, i) => (s.m[i] == null || s.m[i]!.length === p.count) && (s.v[i] == null || s.v[i]!.length === p.count))) return false
+    this.t = s.t
+    this.m.clear(); this.v.clear()
+    params.forEach((p, i) => {
+      if (s.m[i]) this.m.set(p, Float64Array.from(s.m[i]!))
+      if (s.v[i]) this.v.set(p, Float64Array.from(s.v[i]!))
+    })
+    return true
+  }
 
   step(params: Tensor[], lr: number) {
     this.t++

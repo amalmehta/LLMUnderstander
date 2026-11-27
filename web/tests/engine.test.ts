@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { Ops, Rng, Tensor, Num } from '../src/engine/tensor'
 import { BPE, TinyGPT, tokenizer, TRAINING_TEXT, scheduledLR } from '../src/engine/model'
 import { Trainer } from '../src/engine/trainer'
+import { TrainingRun, defaultSettings } from '../src/engine/run'
+import fixture from '../../Tests/Fixtures/first-losses.json'
 import { PostTraining, RewardModel, ScalingLaw, Land } from '../src/engine/toys'
 import { AgentRL, AgentScript, Bandit, ContextBudget, Sampling } from '../src/engine/agents'
 
@@ -53,15 +55,48 @@ describe('autograd and model', () => {
   })
 
   it('training reduces validation loss', () => {
-    const tr = new Trainer(false)
-    tr.settings.totalSteps = 300; tr.settings.warmup = 20
-    const before = tr.validationLoss()
+    const run = new TrainingRun({ ...defaultSettings(), totalSteps: 300, warmup: 20 })
+    const before = run.validationLoss()
     const t0 = performance.now()
-    tr.trainNow(300)
-    const after = tr.validationLoss()
-    console.log(`val loss ${before.toFixed(3)} → ${after.toFixed(3)} in ${((performance.now() - t0) / 1000).toFixed(1)}s; sample: ${tr.sampleText()}`)
+    for (let i = 0; i < 300; i++) run.trainStep()
+    const after = run.validationLoss()
+    console.log(`val loss ${before.toFixed(3)} → ${after.toFixed(3)} in ${((performance.now() - t0) / 1000).toFixed(1)}s; sample: ${run.sample()}`)
     expect(after).toBeLessThan(before - 1)
   }, 120_000)
+
+  it('matches the Mac app: same corpus, same first ten losses (shared fixture)', () => {
+    const run = new TrainingRun()
+    expect(tokenizer.size).toBe(fixture.vocab)
+    expect(TRAINING_TEXT.slice(0, 60)).toBe(fixture.corpusStart)
+    const losses = Array.from({ length: 10 }, () => run.trainStep().loss)
+    losses.forEach((l, i) => expect(l).toBeCloseTo(fixture.losses[i], 4))
+  }, 60_000)
+
+  it('resumes a saved run exactly', () => {
+    const unbroken = new TrainingRun()
+    for (let i = 0; i < 30; i++) unbroken.trainStep()
+    const first = new TrainingRun()
+    for (let i = 0; i < 15; i++) first.trainStep()
+    const resumed = new TrainingRun()
+    resumed.restore(JSON.parse(JSON.stringify(first.state())))
+    let last = 0
+    for (let i = 0; i < 15; i++) last = resumed.trainStep().loss
+    const expected = new TrainingRun()
+    let want = 0
+    for (let i = 0; i < 30; i++) want = expected.trainStep().loss
+    expect(last).toBeCloseTo(want, 9)
+    expect(unbroken.step).toBe(resumed.step)
+  }, 60_000)
+
+  it('the page-side trainer works without a worker', () => {
+    const tr = new Trainer(false, false)
+    expect(tr.isTrained).toBe(false)
+    expect(tr.benchmark.length).toBe(1)
+    tr.trainNow(100)
+    expect(tr.valLoss.length).toBe(2)
+    expect(tr.benchmark.length).toBe(2)
+    expect(tr.snapshotVersion).toBeGreaterThan(0)
+  }, 60_000)
 
   it('BPE learns common chunks and round-trips', () => {
     const bpe = BPE.train(TRAINING_TEXT, 40)

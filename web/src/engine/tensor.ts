@@ -2,22 +2,28 @@
 // the Mac app's Swift engine. Every op records its inputs and a closure that pushes the
 // output gradient back into them; backward() walks the graph in reverse order.
 
-/** Small, fast, seedable RNG (mulberry32 + Box–Muller) so runs are reproducible. */
+const MASK64 = (1n << 64n) - 1n
+
+/**
+ * SplitMix64 + Box–Muller: the same generator as the Mac app (Tensor.swift), so with the
+ * same seed both platforms draw the same weights, batches and samples, and show the same run.
+ */
 export class Rng {
-  private s: number
-  constructor(seed: number) { this.s = (seed >>> 0) || 1 }
-  uniform(): number {
-    this.s = (this.s + 0x6d2b79f5) >>> 0
-    let t = this.s
-    t = Math.imul(t ^ (t >>> 15), t | 1)
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  state: bigint
+  constructor(seed: number | bigint) { this.state = BigInt.asUintN(64, BigInt(seed)) }
+  next(): bigint {
+    this.state = (this.state + 0x9e3779b97f4a7c15n) & MASK64
+    let z = this.state
+    z = ((z ^ (z >> 30n)) * 0xbf58476d1ce4e5b9n) & MASK64
+    z = ((z ^ (z >> 27n)) * 0x94d049bb133111ebn) & MASK64
+    return z ^ (z >> 31n)
   }
+  uniform(): number { return Number(this.next() >> 11n) / 9007199254740992 }
   normal(): number {
     const u1 = Math.max(this.uniform(), 1e-12), u2 = this.uniform()
     return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2)
   }
-  int(n: number): number { return Math.floor(this.uniform() * n) % n }
+  int(n: number): number { return Number(this.next() % BigInt(n)) }
 }
 
 export class Tensor {
