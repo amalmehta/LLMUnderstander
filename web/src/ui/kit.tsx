@@ -1,6 +1,8 @@
 import { ComponentChildren, Fragment, JSX } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { chapterById, chapters, ChapterInfo, secVar } from '../chapters'
+import { guesses } from '../guesses'
+import { progress, useProgress } from '../progress'
 import { Trainer } from '../engine/trainer'
 import { fmt } from '../engine/toys'
 
@@ -65,8 +67,19 @@ export function md(text: string): JSX.Element {
 
 export function Page({ id, children }: { id: string; children: ComponentChildren }) {
   const c = chapterById(id)!
-  const prev = chapters[c.number - 2], next = chapters[c.number]
+  const prev = chapters[c.number - 1], next = chapters[c.number + 1]
+  const end = useRef<HTMLElement>(null)
   useEffect(() => { document.title = `${c.title} · LLM Understander` }, [id])
+  // Counts as read after 20 seconds on the page, or on reaching its end.
+  useEffect(() => {
+    const timer = setTimeout(() => progress.markRead(id), 20_000)
+    const io = typeof IntersectionObserver !== 'undefined' && end.current
+      ? new IntersectionObserver(([e]) => { if (e.isIntersecting) progress.markRead(id) })
+      : null
+    if (io && end.current) io.observe(end.current)
+    return () => { clearTimeout(timer); io?.disconnect() }
+  }, [id])
+  const g = guesses[id]
   return (
     <article class="page" style={{ '--sec': secVar(c.section) }}>
       <header class="page-head">
@@ -74,16 +87,47 @@ export function Page({ id, children }: { id: string; children: ComponentChildren
         <h1>{c.title}</h1>
         <p class="tagline">{c.tagline}</p>
       </header>
+      {g && <GuessCard id={id} />}
       {children}
-      <nav class="pager" aria-label="Chapter navigation">
-        {prev ? <a href={`#${prev.id}`}>← {prev.title}</a> : <span />}
-        {next && <a class="next" href={`#${next.id}`} style={{ '--sec': secVar(next.section) }}>Next: {next.title} →</a>}
+      <nav class="pager" aria-label="Chapter navigation" ref={end}>
+        {prev ? <a href={`#${prev.id}`} title="Previous chapter ([)">← {prev.title}</a> : <span />}
+        {next && <a class="next" href={`#${next.id}`} title="Next chapter (])" style={{ '--sec': secVar(next.section) }}>Next: {next.title} →</a>}
       </nav>
     </article>
   )
 }
 
-const sectionTitle = (c: ChapterInfo) => ({ start: 'Start Here', blocks: 'Building Blocks', learning: 'How It Learns', pretraining: 'Pretraining', posttraining: 'Post-training', wrap: 'Putting It Together', agents: 'Agents & Harnesses' })[c.section]
+/** One prediction per chapter, before its demo. Picking reveals the answer and why; the pick is remembered. */
+export function GuessCard({ id }: { id: string }) {
+  const p = useProgress()
+  const g = guesses[id]
+  const picked = p.guesses[id]
+  const done = picked !== undefined
+  return (
+    <section class="guess" aria-label="Guess first">
+      <div class="guess-head">
+        <span class="guess-label">Guess first</span>
+        {done && <button type="button" class="linklike" onClick={() => progress.clearGuess(id)}>Guess again</button>}
+      </div>
+      <p class="guess-q">{g.question}</p>
+      <div class="guess-options">
+        {g.options.map((o, i) => (
+          <button type="button" key={i} disabled={done}
+            class={`guess-opt${done && i === g.answer ? ' right' : ''}${done && i === picked && i !== g.answer ? ' wrong' : ''}`}
+            aria-label={done ? `${o}${i === g.answer ? ', correct answer' : i === picked ? ', your guess' : ''}` : o}
+            onClick={() => progress.guess(id, i)}>
+            {done && i === g.answer ? '✓ ' : done && i === picked ? '✗ ' : ''}{o}
+          </button>
+        ))}
+      </div>
+      {done
+        ? <p class="guess-why" role="status"><b>{picked === g.answer ? 'Right.' : 'Not quite.'}</b> {md(g.why)}</p>
+        : <p class="note">Pick one, then try the demo below to see for yourself.</p>}
+    </section>
+  )
+}
+
+const sectionTitle = (c: ChapterInfo) => ({ tour: 'Tour', start: 'Start Here', blocks: 'Building Blocks', learning: 'How It Learns', pretraining: 'Pretraining', posttraining: 'Post-training', wrap: 'Putting It Together', agents: 'Agents & Harnesses' })[c.section]
 
 export const P = ({ children }: { children: ComponentChildren }) => <p class="prose">{typeof children === 'string' ? md(children) : children}</p>
 
@@ -195,8 +239,11 @@ export function ModelBanner() {
         {t.isTrained ? <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4-7 7Z" /> : <path d="M1 21h22L12 2 1 21Zm12-3h-2v-2h2v2Zm0-4h-2v-4h2v4Z" />}
       </svg>
       <div class="grow">
-        <b>{t.isTrained ? `Using the tiny model after ${t.step.toLocaleString()} training steps.` : t.step === 0 ? 'The tiny model is untrained — its insides are random noise.' : `The tiny model has only trained ${t.step} steps.`}</b>
-        <small>Everything below is computed live in your browser by a real {fmt.big(t.parameterCount)}-parameter transformer.</small>
+        <b>{t.isTrained ? `Using the tiny model after ${t.step.toLocaleString()} training steps.` : t.step === 0 ? 'The tiny model is untrained — its insides are random noise.' : `The tiny model has trained ${t.step} steps, but isn't good yet.`}</b>
+        <small>{t.latestValLoss === null
+          ? `Random guessing scores a loss of ${t.uniformLoss.toFixed(2)}.`
+          : `Validation loss ${t.latestValLoss.toFixed(2)}; random guessing scores ${t.uniformLoss.toFixed(2)}, and it counts as trained at ${t.trainedLoss.toFixed(2)} or below.`}
+          {' '}Everything below is computed live in your browser by a real {fmt.big(t.parameterCount)}-parameter transformer.</small>
       </div>
       {t.isRunning ? <span>training… step {t.step}</span> : !t.finished && (
         <>

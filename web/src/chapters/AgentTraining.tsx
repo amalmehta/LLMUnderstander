@@ -47,7 +47,7 @@ export default function AgentTraining() {
 function MaskCard() {
   const [showMask, setShowMask] = useState(true)
   return (
-    <Card title="SFT on agent transcripts: what gets trained?" subtitle="Chapter 14's run as a training example. Same loss mask idea as Chapter 11.">
+    <Card title="SFT on agent transcripts: what gets trained?" subtitle="Chapter 17's run as a training example. Same loss mask idea as Chapter 11.">
       <Toggle id="agent-training-mask" label="Show the loss mask" checked={showMask} onChange={setShowMask} />
       <div style={{ height: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '4px' }}>
         {AgentScript.events.filter(AgentScript.inContext).map((e) => {

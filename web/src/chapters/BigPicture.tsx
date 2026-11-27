@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks'
 import { loopPhases } from '../engine/trainer'
-import { Card, Flow, KeyIdea, P, Page, useTicker } from '../ui/kit'
+import { tokenizer } from '../engine/model'
+import { Card, Flow, Formula, GoDeeper, KeyIdea, P, Page, useTicker } from '../ui/kit'
 
 const phaseTargets = ['tokens', 'attention', 'next-token', 'backprop', 'optimizer']
 
@@ -43,7 +44,14 @@ export default function BigPicture() {
         </Card>
       </div>
 
-      <KeyIdea>Learn the loop once and you understand every stage. Chapters 2–5 build the model, 6–9 show how it learns, 10–12 show how that loop is used at scale and then reshaped into an assistant, and 14–18 show how the assistant becomes an agent.</KeyIdea>
+      <KeyIdea>Learn the loop once and you understand every stage. Chapters 2–5 build the model, 6–9 show how it learns, 10–13 show how that loop is used at scale and then reshaped into an assistant that reasons, 14–16 how it's measured and used, and 17–21 how it becomes an agent. New here? The Tour, at the top of the chapter list, runs through it all in a few minutes.</KeyIdea>
+
+      <GoDeeper title={'what "a probability for every next token" means'}>
+        <Formula>{'p(text) = p(x₁) · p(x₂ | x₁) · p(x₃ | x₁, x₂) · … · p(xₙ | x₁ … xₙ₋₁)'}</Formula>
+        <P>**xᵢ** is the i-th token. This is the chain rule of probability, and it's exact: the chance of a whole text is the chance of each token given everything before it, multiplied together. So a model that predicts *one* next token well can score, and write, *any* text, one token at a time.</P>
+        <P>**Why that's enough to learn so much.** To guess the next word of a physics textbook, a recipe or a proof, it helps to know physics, cooking or maths. Nothing tells the model to learn facts or grammar; it picks them up because they make the next token easier to guess. This only works with enormous amounts of text, which is why pretraining is so big.</P>
+        <P>{`**The score is surprise.** Training minimises the *cross-entropy loss*: the average of −log p(the token that actually came next). A model that gives the right token probability 1 scores 0; one that guesses evenly among the ${tokenizer.size} characters our tiny model knows scores log ${tokenizer.size} ≈ ${Math.log(tokenizer.size).toFixed(1)}. Chapter 6 shows it live.`}</P>
+      </GoDeeper>
 
       <Card title="There's a real model inside this page">
         <P>Most pictures on this site are not drawings — they are computed live, in your browser, by a tiny GPT (about 28,000 weights). It starts out knowing nothing. In **Chapter 9** you can train it and watch it learn English-like sentences in a minute or two. Once trained, the tokens, embeddings, attention and predictions in the other chapters all come from it.</P>

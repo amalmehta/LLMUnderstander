@@ -2,7 +2,7 @@ import { optimizerKinds, OptimizerKind } from '../engine/model'
 import { loopPhases } from '../engine/trainer'
 import { fmt } from '../engine/toys'
 import { LineChart } from '../ui/charts'
-import { Btn, Card, Formula, GoDeeper, KeyIdea, Note, P, Page, Segmented, Stat, Toggle, useTrainer } from '../ui/kit'
+import { Btn, Card, Formula, GoDeeper, KeyIdea, Note, P, Page, Segmented, Stat, TextInput, Toggle, useTrainer } from '../ui/kit'
 
 const lrChoices = [3e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1]
 
@@ -66,7 +66,11 @@ export default function TrainingLoop() {
             })}
           </div>
         </Card>
-        <Card title="What it writes" subtitle={'Prompt "the ", sampled every 100 steps'}>
+        <Card title="What it writes" subtitle="Sampled every 100 steps, starting from your prompt">
+          <label for="training-loop-prompt" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-display)', fontSize: '14px' }} title={'Each sample starts with this text. Try the start of a word, like "the far".'}>
+            Prompt
+            <TextInput id="training-loop-prompt" value={t.samplePrompt} onInput={(v) => t.setSamplePrompt(v)} placeholder="the " />
+          </label>
           <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {[...t.samples].reverse().map((s) => (
               <div key={s.step} style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: '6px' }}>

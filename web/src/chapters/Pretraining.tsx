@@ -3,7 +3,7 @@ import { Corpus, TRAINING_TEXT } from '../engine/model'
 import { Rng } from '../engine/tensor'
 import { fmt, ScalingLaw } from '../engine/toys'
 import { LineChart } from '../ui/charts'
-import { Btn, Card, KeyIdea, P, Page, Segmented, Slider, Stat, tokenColor, useTrainer } from '../ui/kit'
+import { Btn, Card, Formula, GoDeeper, KeyIdea, P, Page, Segmented, Slider, Stat, tokenColor, useTrainer } from '../ui/kit'
 
 const tabs = [0, 1, 2, 3, 4] as const
 const tabLabels = ['1 · The data', '2 · Packing batches', '3 · Scaling laws', '4 · Thousands of GPUs', '5 · Tiny vs real']
@@ -19,6 +19,15 @@ export default function Pretraining() {
       {tab === 0 ? <DataTab /> : tab === 1 ? <PackingTab /> : tab === 2 ? <ScalingTab /> : tab === 3 ? <ParallelTab /> : <ComparisonTab />}
 
       <KeyIdea>Pretraining = next-token prediction on trillions of tokens. The result is a **base model**: a superb autocomplete that knows a lot, but doesn't yet know it's supposed to be an assistant. Ask it a question and it may just continue with more questions.</KeyIdea>
+
+      <GoDeeper title="what it takes at scale">
+        <Formula>{'training compute  C ≈ 6 · N · D   floating-point operations'}</Formula>
+        <P>**N** = weights, **D** = training tokens. Each token costs about 2N operations going forward and 4N going backward (Kaplan et al., 2020). An 8B-weight model on 15 trillion tokens is about 7 × 10²³ operations. Our tiny model's full run is about 28,000 × 6 × 384,000 ≈ 6 × 10¹⁰: about ten trillion times less.</P>
+        <P>**Splitting the model, not just the data.** Data parallelism (above) gives every GPU a full copy of the model. Past a few billion weights a copy no longer fits, so the model itself is split: *tensor parallelism* cuts each matrix multiply across GPUs, *pipeline parallelism* puts different blocks on different GPUs and streams micro-batches through them, and *sharded* data parallelism (ZeRO, FSDP) spreads the optimizer's moments and the weights across the data-parallel GPUs too. Big runs combine all of them.</P>
+        <P>**Lower-precision numbers.** Weights and activations are mostly stored as 16-bit *bfloat16*, which halves memory and roughly doubles speed, while a 32-bit master copy of the weights takes the updates. Our engine uses 64-bit numbers everywhere, which is wasteful but simple.</P>
+        <P>**Things go wrong.** Llama 3's 405B run used up to 16,000 H100 GPUs and had 466 job interruptions in one 54-day stretch, mostly hardware faults (Meta, 2024). Runs survive by saving checkpoints often and restarting from the last one. *Loss spikes* (sudden jumps like the one a huge learning rate causes in Chapter 9) are handled by skipping the bad batch, rewinding, or lowering the learning rate.</P>
+        <P>**How busy the GPUs really are.** Model FLOPs utilisation (MFU) is the share of the hardware's peak that goes into the 6ND useful work. Well-tuned large runs reach about 40%; Llama 3 405B reported 38–43%. The rest goes on moving data between GPUs and memory.</P>
+      </GoDeeper>
     </Page>
   )
 }

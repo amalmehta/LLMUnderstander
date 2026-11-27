@@ -39,7 +39,7 @@ export function LineChart({ series, height = 220, xDomain, yDomain, xLabel, yLab
   const yt = niceTicks(yd[0], yd[1], 4)
   return (
     <div ref={ref}>
-      <svg class="chart" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={yLabel ? `${yLabel} chart` : 'chart'}
+      <svg class="chart" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${yLabel ? `${yLabel} chart` : 'Chart'}${xLabel ? ` against ${xLabel}` : ''}. ${series.filter((sr) => sr.points.length).map((sr) => { const last = sr.points[sr.points.length - 1]; return `${sr.name}: ${yFormat(last.y)} at ${xFormat(last.x)}` }).join('; ')}`}
         onClick={onClick ? (e) => { const r = (e.currentTarget as SVGElement).getBoundingClientRect(); onClick(xd[0] + ((e.clientX - r.left - m.l) / iw) * (xd[1] - xd[0])) } : undefined}>
         {yt.map((v) => <g key={'y' + v}><line class="grid" x1={m.l} x2={W - m.r} y1={sy(v)} y2={sy(v)} /><text x={m.l - 6} y={sy(v) + 4} text-anchor="end">{yFormat(v)}</text></g>)}
         {xt.map((v) => <text key={'x' + v} x={sx(v)} y={H - m.b + 15} text-anchor="middle">{xFormat(v)}</text>)}
@@ -74,7 +74,7 @@ export function BarChart({ bars, height = 200, yDomain, yFormat = defaultFmt, va
   const bw = iw / Math.max(bars.length, 1)
   return (
     <div ref={ref}>
-      <svg class="chart" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="bar chart">
+      <svg class="chart" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Bar chart: ${bars.map((b) => `${b.label} ${(valueFormat ?? yFormat)(b.value)}`).join(', ')}`}>
         {niceTicks(yd[0], yd[1], 4).map((v) => <g key={v}><line class="grid" x1={m.l} x2={W - m.r} y1={sy(v)} y2={sy(v)} /><text x={m.l - 6} y={sy(v) + 4} text-anchor="end">{yFormat(v)}</text></g>)}
         {bars.map((b, i) => {
           const x = m.l + i * bw + bw * 0.14, w = bw * 0.72, y0 = sy(Math.max(0, yd[0])), y1 = sy(b.value)
@@ -101,7 +101,7 @@ export function HBarChart({ bars, domain, format, rowHeight = 34, markers }: { b
   const zero = sx(Math.max(d[0], Math.min(0, d[1])))
   return (
     <div ref={ref}>
-      <svg class="chart" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="bar chart">
+      <svg class="chart" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Bar chart: ${bars.map((b) => `${b.label} ${(format ?? defaultFmt)(b.value)}`).join(', ')}`}>
         {bars.map((b, i) => {
           const y = i * rowHeight, x1 = sx(b.value)
           return (
@@ -133,7 +133,7 @@ export function Heatmap({ values, rowLabels = [], colLabels = [], diverging = fa
   }
   return (
     <div class="scroll-x">
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', fontFamily: 'var(--font-mono)' }} role="img" aria-label="heatmap">
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', fontFamily: 'var(--font-mono)' }} role="img" aria-label={heatmapSummary(values, rowLabels, colLabels, highlightRow)}>
         {colLabels.map((l, c) => <text key={'c' + c} x={lw + (c + 0.5) * cell} y={12} text-anchor="middle" style={{ fontSize: '11px', fill: 'var(--ink)' }}>{l}</text>)}
         {values.map((row, r) => (
           <g key={r} onClick={onRow ? () => onRow(r) : undefined} style={onRow ? { cursor: 'pointer' } : undefined}>
@@ -150,4 +150,14 @@ export function Heatmap({ values, rowLabels = [], colLabels = [], diverging = fa
 
 export function Legend({ items }: { items: { name: string; color: string }[] }): JSX.Element {
   return <div class="legend">{items.map((s) => <span key={s.name}><i style={{ background: s.color }} />{s.name}</span>)}</div>
+}
+
+/** What a screen reader hears for a heatmap: the selected row's values, or each row's strongest cell. */
+function heatmapSummary(values: number[][], rows: string[], cols: string[], h?: number): string {
+  const name = (list: string[], i: number) => { const l = list[i] ?? String(i + 1); return l === '␣' ? 'space' : l === '↵' ? 'newline' : l }
+  if (h !== undefined && values[h]) return `Heatmap, ${values.length} rows. Row ${name(rows, h)}: ` + values[h].map((v, j) => `${name(cols, j)} ${v.toFixed(2)}`).join(', ')
+  return `Heatmap, ${values.length} rows. ` + values.slice(0, 16).map((row, r) => {
+    const best = row.reduce((b, v, j) => (Math.abs(v) > Math.abs(row[b]) ? j : b), 0)
+    return `${name(rows, r)}: strongest ${name(cols, best)} ${(row[best] ?? 0).toFixed(2)}`
+  }).join('; ')
 }

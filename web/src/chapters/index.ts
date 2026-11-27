@@ -17,8 +17,13 @@ import Harness from './Harness'
 import ToolUse from './ToolUse'
 import AgentTraining from './AgentTraining'
 import Workflows from './Workflows'
+import Tour from './Tour'
+import Reasoning from './Reasoning'
+import Evals from './Evals'
+import Inference from './Inference'
 
 export const chapterViews: Record<string, FunctionComponent> = {
+  'tour': Tour,
   'big-picture': BigPicture,
   'tokens': Tokens,
   'embeddings': Embeddings,
@@ -31,7 +36,10 @@ export const chapterViews: Record<string, FunctionComponent> = {
   'pretraining': Pretraining,
   'sft': SFT,
   'preferences': Preferences,
+  'reasoning': Reasoning,
+  'evals': Evals,
   'pipeline': Pipeline,
+  'inference': Inference,
   'agent-loop': AgentLoop,
   'harness': Harness,
   'tool-use': ToolUse,

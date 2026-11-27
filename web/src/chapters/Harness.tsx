@@ -130,7 +130,7 @@ function PermissionCard() {
   }
   const asks = calls.filter((c) => outcome(c.content.includes('edit_file'))[0].startsWith('Asks')).length
   return (
-    <Card title="Permissions: who gets asked?" subtitle="The tool calls from Chapter 14's run, under three policies">
+    <Card title="Permissions: who gets asked?" subtitle="The tool calls from Chapter 17's run, under three policies">
       <Segmented options={policies} value={policy} onChange={setPolicy} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {calls.map((c) => {

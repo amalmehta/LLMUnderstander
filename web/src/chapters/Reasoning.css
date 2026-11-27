@@ -1,0 +1,29 @@
+/* Reasoning Models chapter */
+.rsn-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.rsn-cost { display: flex; flex-direction: column; gap: 2px; font: 12.5px var(--font-display); color: var(--muted); min-width: 180px; }
+.rsn-cost input { width: 180px; accent-color: var(--accent); }
+.rsn-sub { font: 650 14px var(--font-display); margin: 0 0 6px; }
+
+.rsn-grid { display: flex; flex-direction: column; gap: 3px; font-family: var(--font-display); width: max-content; }
+.rsn-row { display: flex; gap: 3px; align-items: center; }
+.rsn-grid .lbl { width: 78px; flex: none; font-size: 12px; }
+.rsn-grid .head { width: 30px; flex: none; font-size: 11px; color: var(--muted); text-align: center; }
+.rsn-grid .axis { margin-left: 81px; font-size: 11px; color: var(--muted); }
+.rsn-cell { width: 30px; flex: none; height: 20px; border-radius: 3px; border: 1.5px solid transparent; box-sizing: border-box; transition: background-color 0.15s ease-out; }
+.rsn-cell.just { border-color: color-mix(in srgb, var(--ink) 60%, transparent); }
+
+.rsn-group-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rsn-group-head b { font: 600 13px var(--font-mono); }
+.rsn-silent { font: 12px var(--font-display); padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--c8) 18%, var(--panel)); }
+.rsn-answers { display: flex; flex-wrap: wrap; gap: 6px; }
+.rsn-answer { width: 62px; padding: 6px 0; border-radius: 8px; background: var(--bg); display: flex; flex-direction: column; align-items: center; gap: 3px; font: 11px var(--font-display); }
+.rsn-answer .mark { font-size: 15px; line-height: 1; }
+.rsn-answer .adv { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.rsn-example { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; justify-content: space-between; }
+.rsn-work { display: flex; flex-direction: column; gap: 4px; font-family: var(--font-mono); font-size: 13px; }
+.rsn-work .q, .rsn-work .a { font-size: 14px; }
+.rsn-work .a { font-weight: 600; }
+.rsn-work .line { color: var(--c5); white-space: pre; animation: rsn-in 0.2s ease-out; }
+@keyframes rsn-in { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rsn-work .line { animation: none; } .rsn-cell { transition: none; } }
